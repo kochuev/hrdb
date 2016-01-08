@@ -1,0 +1,69 @@
+<navbar></navbar>
+
+<div class="container">
+  <button class="btn btn-default pull-right" ng-click="vm.state.go('candidate.new')">New candidate</button>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th>
+          First Name
+          <a href ng-click="vm.sortParam('firstName')">
+            <i class="fa" ng-class="vm.sort.field == 'firstName' ? (vm.sort.reverse ? 'fa-sort-alpha-desc' : 'fa-sort-alpha-asc') : 'fa-sort'"></i>
+          </a>
+        </th>
+        <th>
+          Last Name
+          <a href ng-click="vm.sortParam('lastName')">
+            <i class="fa" ng-class="vm.sort.field == 'lastName' ? (vm.sort.reverse ? 'fa-sort-alpha-desc' : 'fa-sort-alpha-asc') : 'fa-sort'"></i>
+          </a>
+        </th>
+        <th>Preferences</th>
+        <th>Is pending communication?</th>
+        <th>Actions</th>
+      </tr>
+      <tr>
+        <th><input class="form-control" type="text" ng-model="vm.query.firstName"></th>
+        <th><input class="form-control" type="text" ng-model="vm.query.lastName"></th>
+        <th>
+          <div class="btn-group">
+            <label class="btn btn-default" ng-model="vm.query.preferences" uib-btn-radio="'blacklist'">Blacklisted</label>
+            <label class="btn btn-default" ng-model="vm.query.preferences" uib-btn-radio="undefined">---</label>
+            <label class="btn btn-default" ng-model="vm.query.preferences" uib-btn-radio="'wishlist'">Wishlisted</label>
+          </div>
+        </th>
+        <th>
+          <div class="btn-group">
+            <label class="btn btn-default" ng-model="vm.query.pending" uib-btn-radio="true">Yes</label>
+            <label class="btn btn-default" ng-model="vm.query.pending" uib-btn-radio="undefined">---</label>
+            <label class="btn btn-default" ng-model="vm.query.pending" uib-btn-radio="false">No</label>
+          </div>
+        </th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-show="!filteredCandidates.length">
+        <td colspan="5">
+          No candidates found
+        </td>
+      </tr>
+      <tr ng-repeat="c in filteredCandidates = (vm.candidates | orderBy : vm.sort.field : vm.sort.reverse | filter: vm.query | limitTo: vm.limit)">
+        <td>{{c.firstName}}</td>
+        <td>{{c.lastName}}</td>
+        <td>
+          <span ng-if="c.preferences == 'blacklist'">BL</span>
+          <span ng-if="c.preferences == 'wishlist'">WL</span>
+        </td>
+        <td><i class="fa fa-check-circle" ng-show="c.pending"></i></td>
+        <td>
+          <button class="btn btn-default" ng-click="vm.state.go('candidate.details', { 'id': c._id})">Edit</button>
+          <button class="btn btn-default" ng-click="vm.removeCandidate(c)">Remove</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <button class="btn btn-default pull-right" ng-click="vm.loadMore(50)" ng-show="vm.limit < vm.candidates.length">Load 50 more</button>
+</div>
+
+<footer></footer>

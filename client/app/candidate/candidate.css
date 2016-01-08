@@ -1,0 +1,36 @@
+.navbar-text {
+  margin-left: 15px;
+}
+.rating .glyphicon, .glyphicon-download {
+  margin-top: 5px;
+  margin-bottom: 10px;
+  font-size: 24px;
+  display: inline-block;
+  font-family: 'Glyphicons Halflings';
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+}
+.visit {
+  margin-top: 20px;
+}
+.fileinfo {
+  padding-top: 25px;
+}
+.fileinfo .progress {
+  margin-top: 5px;
+}
+.rating *:focus {
+  outline: none;
+}
+li[data-closed="hired"] > a {
+  background-color: lightgreen;
+}
+li[data-closed="rejected"] > a {
+  background-color: lightsalmon;
+}
+.fa.form-control-feedback {
+  line-height: 34px;
+}
+

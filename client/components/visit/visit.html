@@ -1,0 +1,189 @@
+<form name="vm.visitInfoForm" style="padding-top: 30px;">
+    <div class="alert alert-warning" role="alert" ng-if="vm.visit.closed == 'rejected'">
+      This visit has been closed. Candidate rejected offer or didn't pass interviews. Reopen to edit.
+    </div>
+    <div class="alert alert-success" role="alert" ng-if="vm.visit.closed == 'hired'">
+      This visit has been closed. Candidate was hired. Reopen to edit.
+    </div>
+
+    <!-- General info -->
+    <div class="row">
+      <div class="col-xs-12">
+        <h4>General visit info</h4>
+        <hr class="separator">
+      </div>
+    </div>
+    <div class="row">
+      <div class="form-group col-xs-2 required" ng-class="{ 'has-error': vm.visitInfoForm.visitGeneralDate.$invalid }">
+        <label class="control-label">Date of CV</label>
+        <input type="date" class="form-control" name="visitGeneralDate" ng-model="vm.visit.general.date" ng-readonly="vm.visit.closed" required/>
+      </div>
+      <div class="form-group col-xs-2">
+        <label class="control-label">Agency</label>
+        <select name="visitGeneralAgency"
+                class="form-control"
+                ng-options="agency._id as agency.name for agency in vm.agencies"
+                ng-model="vm.visit.general._agency"
+                ng-readonly="vm.visit.closed">
+          <option value=""> --- </option>
+        </select>
+      </div>
+      <div class="form-group col-xs-4">
+        <label class="control-label">Company (last position)</label>
+        <input type="text" name="visitGeneralCompany" class="form-control" ng-model="vm.visit.general.company" ng-readonly="vm.visit.closed">
+      </div>
+      <div class="form-group col-xs-2" ng-class="{ 'has-error': vm.visitInfoForm.visitGeneralDesiredSalary.$invalid }">
+        <label class="control-label">Desired salary</label>
+        <div class="input-group">
+          <span class="input-group-addon">$</span>
+          <input type="number" name="visitGeneralDesiredSalary" class="form-control" ng-model="vm.visit.general.desiredSalary" ng-readonly="vm.visit.closed">
+        </div>
+      </div>
+      <div class="form-group col-xs-2">
+        <label class="control-label">Overall impression</label>
+        <div class="rating">
+          <uib-rating name="visitGeneralRating" ng-model="vm.visit.general.rating" readonly="vm.visit.closed"></uib-rating>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="form-group col-xs-2" ng-class="{ 'has-error': vm.visitInfoForm.visitGeneralPosition.$invalid }">
+        <label class="control-label">Position</label>
+        <select name="visitGeneralPosition"
+                class="form-control"
+                ng-options="position._id as position.name for position in vm.positions"
+                ng-model="vm.visit.general._position"
+                ng-readonly="vm.visit.closed"
+                required>
+          <option value=""> --- </option>
+        </select>
+      </div>
+      <div class="form-group col-xs-3">
+        <label class="control-label">How candidate learned about us?</label>
+        <select name="visitGeneralOrigin"
+                class="form-control"
+                ng-options="origin._id as origin.name for origin in vm.origins"
+                ng-model="vm.visit.general._origin"
+                ng-readonly="vm.visit.closed">
+          <option value=""> --- </option>
+        </select>
+      </div>
+      <div class="form-group col-xs-2">
+        <label class="control-label">CV document</label>
+        <button type="file" class="btn btn-default" name="visitGeneralFile" ngf-select="vm.uploadCv($file)" ng-disabled="vm.visit.closed">Select CV document</button>
+      </div>
+      <div class="form-group col-xs-4 fileinfo">
+        <uib-progressbar class="progress-striped active" animate="false" value="vm.uploadedCv.progress" type="info" ng-show="vm.uploadedCv.progress > 0"><b>{{vm.uploadedCv.progress}}%</b></uib-progressbar>
+        <a ng-show="vm.visit.general.uploadedCvId && !vm.uploadedCv.progress" href="/api/files/{{vm.visit.general.uploadedCvId}}" target="_blank">
+          <span class="glyphicon-download"></span>
+        </a>
+      </div>
+    </div>
+    <div class="row">
+      <div class="form-group col-xs-12">
+        <label class="control-label">Notes</label>
+        <textarea name="visitGeneralNotes" class="form-control" ng-model="vm.visit.general.notes" rows="5" ng-readonly="vm.visit.closed"></textarea>
+      </div>
+    </div>
+
+    <!-- Skype interview -->
+    <div class="row">
+      <div class="col-xs-12">
+        <h4><input type="checkbox" ng-model="skype.planned" ng-disabled="vm.visit.closed"> Skype interview</h4>
+        <hr class="separator">
+      </div>
+    </div>
+    <div ng-if="skype.planned">
+      <div class="row">
+        <div class="form-group col-xs-3" ng-class="{ 'has-error': vm.visitInfoForm.visitSkypeDateTime.$invalid }">
+          <label class="control-label">Date & time of interview</label>
+          <input type="datetime-local" class="form-control" name="visitSkypeDateTime" ng-model="vm.visit.skype.dateTime" ng-readonly="vm.visit.closed" required>
+        </div>
+        <div class="form-group col-xs-6">
+          <label class="control-label">Overall impression</label>
+          <div class="rating">
+              <uib-rating name="visitSkypeRating" ng-model="vm.visit.skype.rating" readonly="vm.visit.closed"></uib-rating>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-xs-12">
+          <label for="visitSkypeNotes">Notes</label>
+          <textarea id="visitSkypeNotes" class="form-control" ng-model="vm.visit.skype.notes" rows="5" ng-readonly="vm.visit.closed"></textarea>
+        </div>
+      </div>
+    </div>
+
+  <!-- Office interview -->
+    <div class="row">
+      <div class="col-xs-12">
+        <h4><input type="checkbox" ng-model="office.planned" ng-disabled="vm.visit.closed"> Office interview</h4>
+        <hr class="separator">
+      </div>
+    </div>
+    <div ng-if="office.planned">
+      <div class="row">
+        <div class="form-group col-xs-3" ng-class="{ 'has-error': vm.visitInfoForm.visitOfficeDateTime.$invalid }">
+          <label class="control-label">Date & time of interview</label>
+          <input type="datetime-local" class="form-control" name="visitOfficeDateTime" ng-model="vm.visit.office.dateTime" ng-readonly="vm.visit.closed" required="office.planned">
+        </div>
+        <div class="form-group col-xs-6">
+          <label class="control-label">Overall impression</label>
+          <div class="rating">
+            <uib-rating name="visitOfficeRating" ng-model="vm.visit.office.rating" readonly="vm.visit.closed"></uib-rating>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-xs-12">
+          <label class="control-label">Notes</label>
+          <textarea name="visitOfficeNotes" class="form-control" ng-model="vm.visit.office.notes" rows="5" ng-readonly="vm.visit.closed"></textarea>
+        </div>
+      </div>
+    </div>
+
+  <!-- Proposal -->
+    <div class="row">
+      <div class="col-xs-12">
+        <h4><input type="checkbox" ng-model="proposal.done" ng-disabled="vm.visit.closed"> Proposal</h4>
+        <hr class="separator">
+      </div>
+    </div>
+    <div ng-if="proposal.done">
+      <div class="row">
+        <div class="form-group col-xs-2" ng-class="{ 'has-error': vm.visitInfoForm.visitProposalDate.$invalid }">
+          <label class="control-label">Date of proposal</label>
+          <input type="date" class="form-control" name="visitProposalDate" ng-model="vm.visit.proposal.date" ng-readonly="vm.visit.closed" required>
+        </div>
+        <div class="form-group col-xs-2" ng-class="{ 'has-error': vm.visitInfoForm.visitProposalProbationSalary.$invalid }">
+          <label class="control-label">Salary for probation</label>
+          <div class="input-group">
+            <span class="input-group-addon">$</span>
+            <input type="number" name="visitProposalProbationSalary" class="form-control" ng-model="vm.visit.proposal.probationSalary" ng-readonly="vm.visit.closed" required="proposal.done" pattern="[0-9]+">
+          </div>
+        </div>
+        <div class="form-group col-xs-2" ng-class="{ 'has-error': vm.visitInfoForm.visitProposalSalary.$invalid }">
+          <label class="control-label">Salary</label>
+          <div class="input-group">
+            <span class="input-group-addon">$</span>
+            <input type="number" name="visitProposalSalary" class="form-control" ng-model="vm.visit.proposal.salary" ng-readonly="vm.visit.closed" required="proposal.done" pattern="[0-9]+">
+          </div>
+        </div>
+        <div class="form-group col-xs-4" ng-class="{ 'has-error': vm.visitInfoForm.visitProposalProbationDuration.$invalid }">
+          <label class="control-label">Probation period duration</label>
+          <select class="form-control" name="visitProposalProbationDuration" ng-model="vm.visit.proposal.probationDuration" ng-readonly="vm.visit.closed" required="proposal.done">
+            <option value="1">1 month</option>
+            <option value="2">2 months</option>
+            <option value="3">3 months</option>
+            <option value="4">4+ months</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-xs-12">
+          <label class="control-label">Notes</label>
+          <textarea id="visitProposalNotes" class="form-control" ng-model="vm.visit.proposal.notes" rows="5" ng-readonly="vm.visit.closed"></textarea>
+        </div>
+      </div>
+    </div>
+</form>

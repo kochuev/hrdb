@@ -1,0 +1,20 @@
+hrdb:
+  build: .
+  command: serve
+  ports:
+   - "9000:9000"
+   - "35729:35729"
+   - "5858:5858"
+  volumes:
+   - /c/Users/Eugen/projects/hrdb/:/vol/app/
+  links:
+   - hrdbmongo
+hrdbmongo:
+  ports:
+    - "27017:27017"
+  volumes:
+   - /data/db/:/data/db/
+  image: mongo
+  container_name: hrdbmongo
+  hostname:       hrdbmongo
+  domainname:     hrdbmongo

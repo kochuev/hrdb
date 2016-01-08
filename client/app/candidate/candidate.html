@@ -1,0 +1,141 @@
+<navbar></navbar>
+
+<div class="container">
+  <span us-spinner="{radius:30, width:8, length: 16, position: 'fixed', left: '50%', top: '50%'}" spinner-on="vm.spinner"></span>
+
+  <form name="vm.personInfoForm" class="form-horizontal">
+    <div class="form-group">
+      <div class="col-sm-12">
+        <button class="btn btn-default pull-right" ng-click="vm.$state.go('candidate.list')">Back to list</button>
+      </div>
+    </div>
+    <div class="form-group has-feedback" ng-class="{ 'has-error': vm.personInfoForm.firstName.$invalid}">
+      <label class="col-sm-2 control-label">First Name</label>
+      <div class="col-sm-10">
+        <input type="text" class="form-control" name="firstName" placeholder="First Name" ng-model="vm.candidate.firstName" required>
+        <i class="glyphicon glyphicon-user form-control-feedback"></i>
+      </div>
+    </div>
+    <div class="form-group has-feedback" ng-class="{ 'has-error': vm.personInfoForm.lastName.$invalid}">
+      <label class="col-sm-2 control-label">Last Name</label>
+      <div class="col-sm-10">
+        <input type="text" class="form-control" name="lastName" placeholder="Last Name" ng-model="vm.candidate.lastName" required>
+        <i class="glyphicon glyphicon-user form-control-feedback"></i>
+      </div>
+    </div>
+    <div class="form-group has-feedback" ng-class="{ 'has-error': vm.personInfoForm.birthYear.$invalid}">
+      <label class="col-sm-2 control-label">Year of birth</label>
+      <div class="col-sm-10">
+        <input type="number" class="form-control" name="birthYear" placeholder="Year of Birth" ng-model="vm.candidate.birthYear">
+        <i class="fa fa-birthday-cake form-control-feedback"></i>
+      </div>
+    </div>
+    <hr class="separator">
+    <div class="form-group has-feedback" ng-class="{ 'has-error': vm.personInfoForm.email.$invalid && vm.personInfoForm.email.$dirty }">
+      <label class="col-sm-2 control-label">Email</label>
+      <div class="col-sm-10">
+        <input type="email" class="form-control" name="email" placeholder="Email " ng-model="vm.candidate.email">
+        <i class="fa fa-envelope form-control-feedback"></i>
+      </div>
+    </div>
+    <div class="form-group has-feedback">
+      <label for="skypeId" class="col-sm-2 control-label">Skype ID</label>
+      <div class="col-sm-10">
+        <input type="text" class="form-control" id="skypeId" placeholder="Skype ID" ng-model="vm.candidate.skypeId">
+        <i class="fa fa-skype form-control-feedback"></i>
+      </div>
+    </div>
+    <div class="form-group has-feedback">
+      <label for="phone1" class="col-sm-2 control-label">Phone #1</label>
+      <div class="col-sm-10">
+        <input type="text" class="form-control" id="phone1" placeholder="Phone #1" ng-model="vm.candidate.phone1">
+        <i class="fa fa-phone-square form-control-feedback"></i>
+      </div>
+    </div>
+    <div class="form-group has-feedback">
+      <label for="phone2" class="col-sm-2 control-label">Phone #2</label>
+      <div class="col-sm-10">
+        <input type="text" class="form-control" id="phone2" placeholder="Phone #2" ng-model="vm.candidate.phone2">
+        <i class="fa fa-phone-square form-control-feedback"></i>
+      </div>
+    </div>
+    <div class="form-group has-feedback" ng-class="{ 'has-error': vm.personInfoForm.linkedinUrl.$invalid }">
+      <label class="col-sm-2 control-label">Linkedin URL</label>
+      <div class="col-sm-10">
+        <input type="url" class="form-control" name="linkedinUrl" placeholder="Linkedin URL" ng-model="vm.candidate.linkedinUrl">
+        <i class="fa fa-linkedin-square form-control-feedback"></i>
+      </div>
+    </div>
+    <div class="form-group has-feedback">
+      <label for="address" class="col-sm-2 control-label">Address</label>
+      <div class="col-sm-10">
+        <input type="text" class="form-control" id="address" placeholder="Address" ng-model="vm.candidate.address">
+        <i class="fa fa-globe form-control-feedback"></i>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="col-sm-2 control-label">Preferences</label>
+      <div class="col-sm-10">
+        <div class="btn-group">
+          <label class="btn btn-default" ng-model="vm.candidate.preferences" uib-btn-radio="'blacklist'">Black list</label>
+          <label class="btn btn-default" ng-model="vm.candidate.preferences" uib-btn-radio="">Normal</label>
+          <label class="btn btn-default" ng-model="vm.candidate.preferences" uib-btn-radio="'wishlist'">Wish list</label>
+        </div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="notes" class="col-sm-2 control-label">Notes</label>
+      <div class="col-sm-10">
+        <textarea id="notes" class="form-control" ng-model="vm.date.notes" rows="5"></textarea>
+      </div>
+    </div>
+  </form>
+
+  <uib-tabset style="padding-top: 30px">
+    <uib-tab ng-click="vm.addVisit()">
+      <uib-tab-heading>
+        <i class="glyphicon glyphicon-plus"></i>
+      </uib-tab-heading>
+    </uib-tab>
+    <uib-tab ng-repeat="v in vm.candidate.visits" active="v.active">
+      <uib-tab-heading>
+        <i class="glyphicon glyphicon-ok" ng-if="v.closed == 'hired'"></i>
+        <i class="fa fa-user-times" ng-if="v.closed == 'rejected'"></i>
+        <i class="fa fa-hourglass-half" ng-if="!v.closed"></i>
+        {{v.general.date | date: "dd.MM.yy"}}
+        <i class="fa fa-exclamation-triangle" style="color: red" ng-if="!v.isValid()"></i>
+        <span uib-dropdown on-toggle="toggled(open)">
+          <a href id="simple-dropdown" class="caret" uib-dropdown-toggle></a>
+          <ul class="uib-dropdown-menu" aria-labelledby="simple-dropdown">
+            <li>
+              <a ng-click="vm.removeVisit('visit on ' +  vm.filter('date')(v.general.date,'dd.MM.yy'), $index)">Remove</a>
+            </li>
+            <li ng-if="!v.closed">
+              <a ng-click="vm.rejectVisit(v)">Close with rejection</a>
+            </li>
+            <li ng-if="!v.closed">
+              <a ng-click="vm.hireVisit(v)">Close with hire</a>
+            </li>
+            <li ng-if="v.closed">
+              <a ng-click="vm.reopenVisit(v)">Reopen</a>
+            </li>
+          </ul>
+        </span>
+      </uib-tab-heading>
+      <visit visit="v" candidate-name="{{vm.candidate.firstName + ' ' + vm.candidate.lastName}}"></visit>
+    </uib-tab>
+  </uib-tabset>
+
+  <div class="row">
+    <div class="form-group">
+      <div class="col-sm-12">
+        <div class="btn-group pull-right">
+          <button class="btn btn-default" ng-disabled="!vm.isValid() || vm.spinner" ng-click="vm.save()">Save</button>
+          <button class="btn btn-default" ng-disabled="!vm.isValid() || vm.spinner" ng-click="vm.save(true);">Save & Back to list</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer></footer>
