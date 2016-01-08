@@ -6,10 +6,10 @@ module.exports = {
 
   // MongoDB connection options
   mongo: {
-    uri: 'mongodb://hrdbmongo/app-dev'
+    uri: 'mongodb://hrdbmongo/hrdb-dev'
   },
 
-  uploadDir: '/vol/app/uploads',
+  uploadDir: '/data/uploads',
 
   // Seed database on startup
   seedDB: true

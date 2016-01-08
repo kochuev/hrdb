@@ -1,0 +1,18 @@
+hrdb:
+  build: .
+  command: serve
+  environment:
+    - PORT=80
+  ports:
+   - "80:80"
+  volumes:
+   - /data/uploads/:/data/uploads/
+  links:
+   - hrdbmongo
+hrdbmongo:
+  volumes:
+   - /data/db/:/data/db/
+  image: mongo
+  container_name: hrdbmongo
+  hostname:       hrdbmongo
+  domainname:     hrdbmongo

@@ -36,6 +36,8 @@ WORKDIR /vol/app
 COPY . .
 RUN bower install --allow-root
 
+RUN mkdir -p /data/uploads
+
 ENTRYPOINT ["grunt"]
 EXPOSE 9000 35729 5858
 CMD serve:dist
