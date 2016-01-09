@@ -38,6 +38,8 @@ RUN bower install --allow-root
 
 RUN mkdir -p /data/uploads
 
+ENV PATH=$PATH:/vol/app/bin:/usr/local/bin
+
 #ENTRYPOINT ["grunt"]
 EXPOSE 9000 35729 5858
 CMD ["grunt", "serve:dist"]
