@@ -1,5 +1,6 @@
 hrdb:
   build: .
+  working_dir: /vol/app/
   command: grunt serve
   ports:
    - "9000:9000"
