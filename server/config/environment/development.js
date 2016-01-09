@@ -9,8 +9,6 @@ module.exports = {
     uri: 'mongodb://hrdbmongo/hrdb-dev'
   },
 
-  uploadDir: '/data/uploads',
-
   // Seed database on startup
   seedDB: true
 

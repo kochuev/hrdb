@@ -28,7 +28,7 @@ var all = {
   seedDB: false,
 
   // upload dir
-  uploadDir: '/data/uploads',
+  uploadDir: path.normalize(__dirname + '/../../..' + '/uploads'),
 
   // Secret for session, you will want to change this and make it an environment variable
   secrets: {

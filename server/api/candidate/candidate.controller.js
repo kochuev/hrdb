@@ -63,7 +63,7 @@ export function index(req, res) {
         lastName: 1,
         preferences: 1,
         pending: {
-          $cond: { if: { $eq: ['$visits.closed', false] }, then: true, else: false }
+          $cond: { if: { $eq: ['$visits.closed', true] }, then: 0, else: 1 }
         }
       }
     },
