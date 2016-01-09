@@ -1,5 +1,6 @@
 hrdb:
   build: .
+  restart: always
   environment:
     - PORT=80
   ports:
@@ -9,6 +10,9 @@ hrdb:
   links:
    - hrdbmongo
 hrdbmongo:
+  restart: always
+  ports:
+    - "27017:27017"
   volumes:
    - /data/db/:/data/db/
   image: mongo
