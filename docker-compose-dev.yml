@@ -14,7 +14,7 @@ hrdbmongo:
     - "27017:27017"
   volumes:
    - /data/db/:/data/db/
-  image: mongo:2.9
+  image: mongo:2.6
   container_name: hrdbmongo
   hostname:       hrdbmongo
   domainname:     hrdbmongo
