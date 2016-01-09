@@ -1,13 +1,12 @@
 hrdb:
   build: .
-  working_dir: /vol/app/
-  command: grunt serve
+  command: ["grunt", "serve"]
   ports:
    - "9000:9000"
    - "35729:35729"
    - "5858:5858"
   volumes:
-   - /c/Users/Eugen/projects/hrdb/:/vol/app/
+   - .:/vol/app/
   links:
    - hrdbmongo
 hrdbmongo:
