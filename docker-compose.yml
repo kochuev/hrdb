@@ -1,6 +1,5 @@
 hrdb:
   build: .
-  command: serve
   environment:
     - PORT=80
   ports:
