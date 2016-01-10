@@ -8,7 +8,8 @@
 	        <strong>{{user.name}}</strong><br>
 	        <span class="text-muted">{{user.email}}</span>
 	    </div>
-        <a ng-click="admin.delete(user)" class="trash"><span class="fa fa-trash fa-2x"></span></a>
+        <a href="#" ng-click="admin.delete(user)" class="trash"><span class="fa fa-trash fa-2x"></span></a>
+        <a href="#" ng-click="admin.toggleActivation(user)" class="activation"><span class="fa fa-2x" ng-class="{'fa-toggle-on': user.active, 'fa-toggle-off': !user.active}"></span></a>
     </li>
   </ul>
 </div>

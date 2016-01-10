@@ -91,8 +91,10 @@
     </div>
   </form>
 
+  <div ng-repeat="openVisit in openVisits = (vm.candidate.visits | filter:{closed: false})"></div>
+
   <uib-tabset style="padding-top: 30px">
-    <uib-tab ng-click="vm.addVisit()">
+    <uib-tab uib-popover="{{openVisits.length > 0 ? 'Can\'t have more than one open visit' : ''}}" popover-trigger="mouseenter" disable="openVisits.length > 0" ng-click="openVisits.length || vm.addVisit()">
       <uib-tab-heading>
         <i class="glyphicon glyphicon-plus"></i>
       </uib-tab-heading>

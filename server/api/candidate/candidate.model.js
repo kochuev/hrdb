@@ -3,8 +3,14 @@
 var mongoose = require('bluebird').promisifyAll(require('mongoose'));
 
 var CandidateSchema = new mongoose.Schema({
-  firstName: { type: String, required: true } ,
-  lastName: { type: String, required: true },
+  firstName: {
+    type: String,
+    required: true
+  },
+  lastName: {
+    type: String,
+    required: true
+  },
   birthYear: Number,
   email: String,
   skypeId: String,
@@ -16,15 +22,31 @@ var CandidateSchema = new mongoose.Schema({
   notes: String,
   visits: [{
     closed: mongoose.Schema.Types.Mixed,
-    active: Boolean,
+    active: {
+      type: Boolean,
+      default: false
+    },
     general: {
-      date: { type: Date, required: true },
-      _agency: { type: String, ref: 'Agency' },
+      date: {
+        type: Date,
+        required: true
+      },
+      _agency: {
+        type: String,
+        ref: 'Agency'
+      },
       company: String,
       desiredSalary: Number,
       rating: Number,
-      _position: { type: String, ref: 'Position', required: true },
-      _origin: { type: String, ref: 'Origin' },
+      _position: {
+        type: String,
+        ref: 'Position',
+        required: true
+      },
+      _origin: {
+        type: String,
+        ref: 'Origin'
+      },
       uploadedCvId: String,
       notes: String
     },

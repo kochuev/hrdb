@@ -46,11 +46,8 @@ export function create(req, res, next) {
   newUser.provider = 'local';
   newUser.role = 'user';
   newUser.saveAsync()
-    .spread(function(user) {
-      var token = jwt.sign({ _id: user._id }, config.secrets.session, {
-        expiresIn: 60 * 60 * 5
-      });
-      res.json({ token });
+    .then(function() {
+      res.status(204).end();
     })
     .catch(validationError(res));
 }
@@ -103,6 +100,24 @@ export function changePassword(req, res, next) {
       } else {
         return res.status(403).end();
       }
+    });
+}
+
+/**
+ * Toggles user activation
+ */
+export function toogleActivation(req, res, next) {
+  var userId = req.params._id;
+
+  User.findByIdAsync(userId)
+    .then(user => {
+      user.active = !user.active;
+      console.log(user);
+      return user.saveAsync()
+        .then(() => {
+          res.status(204).end();
+        })
+        .catch(validationError(res));
     });
 }
 

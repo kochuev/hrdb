@@ -64,33 +64,34 @@ export function index(req, res) {
         preferences: 1,
         pending: {
           $cond: { if: { $eq: ['$visits.closed', true] }, then: 0, else: 1 }
-        }
+        },
+        visitDate: '$visits.general.date'
       }
     },
     {
-      $group:
-      {
-        _id:
-        {
+      $group:{
+        _id:{
           _id: '$_id',
           firstName:'$firstName',
           lastName: '$lastName',
           preferences: '$preferences'
         },
-        pending:
-        {
+        pending:{
           $max: '$pending'
+        },
+        lastVisitDate:{
+          $last: '$visitDate'
         }
       }
     },
     {
-      $project:
-      {
+      $project:{
         _id: '$_id._id',
         firstName: '$_id.firstName',
         lastName: '$_id.lastName',
         preferences: '$_id.preferences',
-        pending: 1
+        pending: 1,
+        lastVisitDate: 1
       }
     }
   ])
@@ -120,6 +121,10 @@ export function update(req, res) {
   //}
   Candidate.findByIdAndUpdateAsync(req.params.id, req.body , {overwrite: true})
     .then(handleEntityNotFound(res))
+    .then((doc)=> {
+      console.log(doc);
+      return doc;
+    })
     //.then(saveUpdates(req.body))
     .then(responseWithResult(res))
     .catch(handleError(res));

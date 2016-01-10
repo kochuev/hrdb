@@ -17,6 +17,12 @@ function UserResource($resource) {
       params: {
         id:'me'
       }
+    },
+    toggleActivation: {
+      method: 'PUT',
+      params: {
+        controller:'toggleActivation'
+      }
     }
   });
 }

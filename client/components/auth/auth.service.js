@@ -26,7 +26,9 @@ function AuthService($location, $http, $cookies, $q, appConfig, Util, User) {
         password: user.password
       })
         .then(res => {
-          $cookies.put('token', res.data.token);
+          var cookieExp = new Date();
+          cookieExp.setDate(cookieExp.getDate() + 365);
+          $cookies.put('token', res.data.token, {expires: cookieExp});
           currentUser = User.get();
           return currentUser.$promise;
         })
@@ -59,12 +61,12 @@ function AuthService($location, $http, $cookies, $q, appConfig, Util, User) {
     createUser(user, callback) {
       return User.save(user,
         function(data) {
-          $cookies.put('token', data.token);
-          currentUser = User.get();
+          //$cookies.put('token', data.token);
+          //currentUser = User.get();
           return safeCb(callback)(null, user);
         },
         function(err) {
-          Auth.logout();
+          //Auth.logout();
           return safeCb(callback)(err);
         }).$promise;
     },

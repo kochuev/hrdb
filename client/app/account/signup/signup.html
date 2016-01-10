@@ -6,7 +6,12 @@
       <h1>Sign up</h1>
     </div>
     <div class="col-sm-12">
-      <form class="form" name="form" ng-submit="vm.register(form)" novalidate>
+
+      <div class="alert alert-success" ng-if="vm.success">
+        Your account has been successfully created. You will be able to login once your account is approved by administrator.
+      </div>
+
+      <form class="form" name="form" ng-submit="vm.register(form)" ng-if="!vm.success" novalidate>
 
         <div class="form-group" ng-class="{ 'has-success': form.name.$valid && vm.submitted,
                                             'has-error': form.name.$invalid && vm.submitted }">

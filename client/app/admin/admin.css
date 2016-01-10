@@ -12,8 +12,9 @@
 .user-list li .user-info {
 	flex-grow: 1;
 }
-.user-list li .trash {
+.user-list li .trash, .user-list li .activation {
 	display: flex;
 	align-items: center;
 	text-decoration: none;
+  padding: 0 3px;
 }

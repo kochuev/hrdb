@@ -14,6 +14,10 @@ var UserSchema = new Schema({
     type: String,
     default: 'user'
   },
+  active: {
+    type: Boolean,
+    default: false
+  },
   password: String,
   provider: String,
   salt: String
@@ -120,7 +124,7 @@ UserSchema
  */
 UserSchema.methods = {
   /**
-   * Authenticate - check if the passwords are the same
+   * Authenticate - check if the passwords are the same and user account is activated
    *
    * @param {String} password
    * @param {Function} callback
@@ -129,7 +133,7 @@ UserSchema.methods = {
    */
   authenticate(password, callback) {
     if (!callback) {
-      return this.password === this.encryptPassword(password);
+      return this.active && this.password === this.encryptPassword(password);
     }
 
     this.encryptPassword(password, (err, pwdGen) => {
@@ -137,7 +141,7 @@ UserSchema.methods = {
         return callback(err);
       }
 
-      if (this.password === pwdGen) {
+      if ( this.active && this.password === pwdGen) {
         callback(null, true);
       } else {
         callback(null, false);

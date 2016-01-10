@@ -10,6 +10,8 @@ class SignupController {
   constructor(Auth, $state) {
     this.Auth = Auth;
     this.$state = $state;
+
+    this.success = false;
   }
 
   register(form) {
@@ -23,7 +25,8 @@ class SignupController {
       })
       .then(() => {
         // Account created, redirect to home
-        this.$state.go('main');
+        // this.$state.go('main');
+        this.success = true;
       })
       .catch(err => {
         err = err.data;

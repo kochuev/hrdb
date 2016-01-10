@@ -64,7 +64,7 @@ export function hasRole(roleRequired) {
  */
 export function signToken(id, role) {
   return jwt.sign({ _id: id, role: role }, config.secrets.session, {
-    expiresIn: 60 * 60 * 5
+    expiresIn: 60 * 60 * 24 * 365
   });
 }
 

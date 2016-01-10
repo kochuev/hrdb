@@ -19,26 +19,28 @@
           </a>
         </th>
         <th>Preferences</th>
-        <th>Is pending communication?</th>
-        <th>Actions</th>
+        <th>Pending visits</th>
+        <th>Last visit</th>
+        <th></th>
       </tr>
       <tr>
         <th><input class="form-control" type="text" ng-model="vm.query.firstName"></th>
         <th><input class="form-control" type="text" ng-model="vm.query.lastName"></th>
         <th>
           <div class="btn-group">
-            <label class="btn btn-default" ng-model="vm.query.preferences" uib-btn-radio="'blacklist'">Blacklisted</label>
-            <label class="btn btn-default" ng-model="vm.query.preferences" uib-btn-radio="undefined">---</label>
-            <label class="btn btn-default" ng-model="vm.query.preferences" uib-btn-radio="'wishlist'">Wishlisted</label>
+            <label class="btn btn-default" ng-model="vm.query.preferences" uib-btn-radio="'blacklist'">BL</label>
+            <label class="btn btn-default" ng-model="vm.query.preferences" uib-btn-radio="undefined">-</label>
+            <label class="btn btn-default" ng-model="vm.query.preferences" uib-btn-radio="'wishlist'">WL</label>
           </div>
         </th>
         <th>
           <div class="btn-group">
-            <label class="btn btn-default" ng-model="vm.query.pending" uib-btn-radio="true">Yes</label>
-            <label class="btn btn-default" ng-model="vm.query.pending" uib-btn-radio="undefined">---</label>
-            <label class="btn btn-default" ng-model="vm.query.pending" uib-btn-radio="false">No</label>
+            <label class="btn btn-default" ng-model="vm.query.pending" uib-btn-radio="true">Y</label>
+            <label class="btn btn-default" ng-model="vm.query.pending" uib-btn-radio="undefined">-</label>
+            <label class="btn btn-default" ng-model="vm.query.pending" uib-btn-radio="false">N</label>
           </div>
         </th>
+        <th></th>
         <th></th>
       </tr>
     </thead>
@@ -55,10 +57,11 @@
           <span ng-if="c.preferences == 'blacklist'">BL</span>
           <span ng-if="c.preferences == 'wishlist'">WL</span>
         </td>
-        <td><i class="fa fa-check-circle" ng-show="c.pending"></i></td>
+        <td><i class="fa fa-check-circle fa-2x" ng-show="c.pending"></i></td>
+        <td>{{c.lastVisitDate | date: "dd.MM.yy"}}</td>
         <td>
-          <button class="btn btn-default" ng-click="vm.state.go('candidate.details', { 'id': c._id})">Edit</button>
-          <button class="btn btn-default" ng-click="vm.removeCandidate(c)">Remove</button>
+          <a href="#" ng-click="vm.state.go('candidate.details', { 'id': c._id})" class="edit"><span class="fa fa-pencil fa-2x"></span></a>
+          <a href="#" ng-click="vm.removeCandidate(c)" class="trash"><span class="fa fa-trash fa-2x"></span></a>
         </td>
       </tr>
     </tbody>

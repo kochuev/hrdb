@@ -7,7 +7,7 @@ class NavbarController {
     'state': 'candidate.list'
   },
   {
-    'title': 'Agency',
+    'title': 'Agencies',
     'state': 'entity.agency'
   },
   {
