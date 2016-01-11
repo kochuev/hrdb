@@ -33,5 +33,8 @@ li[data-closed="rejected"] > a {
 .fa.form-control-feedback {
   line-height: 34px;
 }
-
+.byagency {
+  display: block;
+  font-size: 12px;
+}
 

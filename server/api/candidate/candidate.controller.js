@@ -63,9 +63,10 @@ export function index(req, res) {
         lastName: 1,
         preferences: 1,
         pending: {
-          $cond: { if: { $eq: ['$visits.closed', true] }, then: 0, else: 1 }
+          $cond: { if: { $ne: ['$visits.closed', false] }, then: 0, else: 1 }
         },
-        visitDate: '$visits.general.date'
+        visitDate: '$visits.general.date',
+        _agency: '$visits.general._agency'
       }
     },
     {
@@ -81,6 +82,9 @@ export function index(req, res) {
         },
         lastVisitDate:{
           $last: '$visitDate'
+        },
+        _lastVisitAgency:{
+          $last: '$_agency'
         }
       }
     },
@@ -91,7 +95,8 @@ export function index(req, res) {
         lastName: '$_id.lastName',
         preferences: '$_id.preferences',
         pending: 1,
-        lastVisitDate: 1
+        lastVisitDate: 1,
+        _lastVisitAgency: 1
       }
     }
   ])
@@ -119,7 +124,7 @@ export function update(req, res) {
   //if (req.body._id) {
   //  delete req.body._id;
   //}
-  Candidate.findByIdAndUpdateAsync(req.params.id, req.body , {overwrite: true})
+  Candidate.findByIdAndUpdateAsync(req.params.id, req.body, {overwrite: true})
     .then(handleEntityNotFound(res))
     .then((doc)=> {
       console.log(doc);

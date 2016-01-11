@@ -5,7 +5,7 @@
 class CandidateController {
 
   constructor($filter, $http, $state, $stateParams, $scope, Modal, candidateObj) {
-    this.filter = $filter;
+    this.$filter = $filter;
     this.$http = $http;
     this.$state = $state;
     this.$stateParams = $stateParams;
@@ -71,6 +71,11 @@ class CandidateController {
 
   reopenVisit(visit) {
     visit.closed = false;
+  }
+
+  hasOpenVisits() {
+    //console.log(this.$filter('hasOpenVisits')(this.candidate.visits));
+    return this.$filter('hasOpenVisits')(this.candidate.visits);
   }
 
   isValid() {

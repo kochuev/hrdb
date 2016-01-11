@@ -21,7 +21,10 @@ var CandidateSchema = new mongoose.Schema({
   preferences: String,
   notes: String,
   visits: [{
-    closed: mongoose.Schema.Types.Mixed,
+    closed: {
+      type: mongoose.Schema.Types.Mixed,
+      default: false,
+    },
     active: {
       type: Boolean,
       default: false

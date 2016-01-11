@@ -91,10 +91,8 @@
     </div>
   </form>
 
-  <div ng-repeat="openVisit in openVisits = (vm.candidate.visits | filter:{closed: false})"></div>
-
   <uib-tabset style="padding-top: 30px">
-    <uib-tab uib-popover="{{openVisits.length > 0 ? 'Can\'t have more than one open visit' : ''}}" popover-trigger="mouseenter" disable="openVisits.length > 0" ng-click="openVisits.length || vm.addVisit()">
+    <uib-tab uib-popover="{{vm.hasOpenVisits() ? 'Already have open visit(s)' : ''}}" popover-trigger="mouseenter" disable="vm.hasOpenVisits()" ng-click="vm.hasOpenVisits() || vm.addVisit()">
       <uib-tab-heading>
         <i class="glyphicon glyphicon-plus"></i>
       </uib-tab-heading>
@@ -110,7 +108,7 @@
           <a href id="simple-dropdown" class="caret" uib-dropdown-toggle></a>
           <ul class="uib-dropdown-menu" aria-labelledby="simple-dropdown">
             <li>
-              <a ng-click="vm.removeVisit('visit on ' +  vm.filter('date')(v.general.date,'dd.MM.yy'), $index)">Remove</a>
+              <a ng-click="vm.removeVisit('visit on ' +  vm.$filter('date')(v.general.date,'dd.MM.yy'), $index)">Remove</a>
             </li>
             <li ng-if="!v.closed">
               <a ng-click="vm.rejectVisit(v)">Close with rejection</a>
@@ -128,7 +126,7 @@
     </uib-tab>
   </uib-tabset>
 
-  <div class="row">
+  <div class="row" style="margin-top: 30px;">
     <div class="form-group">
       <div class="col-sm-12">
         <div class="btn-group pull-right">

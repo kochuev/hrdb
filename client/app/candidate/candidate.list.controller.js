@@ -5,21 +5,28 @@
 class CandidateListController {
 
   constructor($http, $state, Modal) {
-    var vm = this;
     this.$http = $http;
     this.Modal = Modal;
 
-    vm.state = $state;
+    this.state = $state;
 
-    vm.candidates = [];
+    this.candidates = [];
 
-    vm.limit = 50;
+    this.limit = 50;
 
-    vm.query = {};
-    vm.sort = {field: 'lastName', reverse: false};
+    this.query = {};
+    this.sort = {field: 'lastName', reverse: false};
 
     $http.get('/api/candidates/').then(response => {
-      vm.candidates = response.data;
+      this.candidates = response.data;
+    });
+
+    $http.get('/api/entities/agency').then(response => {
+      this.agencies = {};
+      for (var i = 0; i < response.data.length; i++)
+      {
+          this.agencies[response.data[i]._id] =  response.data[i];
+      }
     });
 
   }
