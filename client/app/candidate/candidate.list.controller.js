@@ -15,7 +15,10 @@ class CandidateListController {
     this.limit = 50;
 
     this.query = {};
-    this.sort = {field: 'lastName', reverse: false};
+    this.sort = {
+      field: 'lastVisitDate',
+      reverse: true
+    };
 
     $http.get('/api/candidates/').then(response => {
       this.candidates = response.data;

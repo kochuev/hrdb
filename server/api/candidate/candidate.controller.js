@@ -2,6 +2,7 @@
 
 import _ from 'lodash';
 import Candidate from './candidate.model';
+import calendar from '../../components/calendar';
 
 function handleError(res, statusCode) {
   statusCode = statusCode || 500;
@@ -121,18 +122,24 @@ export function create(req, res) {
 
 // Updates an existing Candidate in the DB
 export function update(req, res) {
-  //if (req.body._id) {
-  //  delete req.body._id;
-  //}
-  Candidate.findByIdAndUpdateAsync(req.params.id, req.body, {overwrite: true})
-    .then(handleEntityNotFound(res))
-    .then((doc)=> {
-      console.log(doc);
-      return doc;
-    })
-    //.then(saveUpdates(req.body))
-    .then(responseWithResult(res))
-    .catch(handleError(res));
+  var newCandidate = req.body;
+
+  var cal = new calendar( () => {
+    cal.handleSkypeInterviews(newCandidate, (err, candidate) => {
+      cal.handleOfficeInterviews(newCandidate, (err, candidate) => {
+        Candidate.findByIdAndUpdateAsync(req.params.id, newCandidate, {overwrite: true})
+          .then(handleEntityNotFound(res))
+          .then((oldCandidate)=> {
+            cal.handleRemovedVisits(oldCandidate.visits, newCandidate.visits);
+            Candidate.findByIdAsync(req.params.id)
+              .then(responseWithResult(res));
+          })
+          .then(responseWithResult(res))
+          .catch(handleError(res));
+
+      });
+    });
+  });
 }
 
 // Deletes a Candidate from the DB

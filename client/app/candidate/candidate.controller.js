@@ -42,7 +42,8 @@ class CandidateController {
           this.$state.go('candidate.details', {id: response.data._id});
       });
     } else if (this.$state.is('candidate.details')) {
-      this.$http.put('/api/candidates/' + this.$stateParams.id, this.candidate).then(() => {
+      this.$http.put('/api/candidates/' + this.$stateParams.id, this.candidate).then(response => {
+        this.candidate = response.data;
         if (backToList)
           this.$state.go('candidate.list');
         else
@@ -55,6 +56,15 @@ class CandidateController {
     this.candidate.visits.push({
       general: {
         'date': new Date()
+      },
+      skype: {
+        planned: false
+      },
+      office: {
+        planned: false
+      },
+      proposal: {
+        done: false
       },
       active: true,
       closed: false

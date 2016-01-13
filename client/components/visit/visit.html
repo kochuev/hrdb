@@ -89,11 +89,11 @@
     <!-- Skype interview -->
     <div class="row">
       <div class="col-xs-12">
-        <h4><input type="checkbox" ng-model="skype.planned" ng-disabled="vm.visit.closed"> Skype interview</h4>
+        <h4><input type="checkbox" ng-model="vm.visit.skype.planned" ng-disabled="vm.visit.closed"> Skype interview</h4>
         <hr class="separator">
       </div>
     </div>
-    <div ng-if="skype.planned">
+    <div ng-if="vm.visit.skype.planned">
       <div class="row">
         <div class="form-group col-xs-3" ng-class="{ 'has-error': vm.visitInfoForm.visitSkypeDateTime.$invalid }">
           <label class="control-label">Date & time of interview</label>
@@ -117,11 +117,11 @@
   <!-- Office interview -->
     <div class="row">
       <div class="col-xs-12">
-        <h4><input type="checkbox" ng-model="office.planned" ng-disabled="vm.visit.closed"> Office interview</h4>
+        <h4><input type="checkbox" ng-model="vm.visit.office.planned" ng-disabled="vm.visit.closed"> Office interview</h4>
         <hr class="separator">
       </div>
     </div>
-    <div ng-if="office.planned">
+    <div ng-if="vm.visit.office.planned">
       <div class="row">
         <div class="form-group col-xs-3" ng-class="{ 'has-error': vm.visitInfoForm.visitOfficeDateTime.$invalid }">
           <label class="control-label">Date & time of interview</label>
@@ -145,11 +145,11 @@
   <!-- Proposal -->
     <div class="row">
       <div class="col-xs-12">
-        <h4><input type="checkbox" ng-model="proposal.done" ng-disabled="vm.visit.closed"> Proposal</h4>
+        <h4><input type="checkbox" ng-model="vm.visit.proposal.done" ng-disabled="vm.visit.closed"> Proposal</h4>
         <hr class="separator">
       </div>
     </div>
-    <div ng-if="proposal.done">
+    <div ng-if="vm.visit.proposal.done">
       <div class="row">
         <div class="form-group col-xs-2" ng-class="{ 'has-error': vm.visitInfoForm.visitProposalDate.$invalid }">
           <label class="control-label">Date of proposal</label>

@@ -5,8 +5,9 @@ class NavbarController {
   menu = [{
     'title': 'Candidates',
     'state': 'candidate.list'
-  },
-  {
+  }];
+
+  menuAdmin = [{
     'title': 'Agencies',
     'state': 'entity.agency'
   },
@@ -17,6 +18,10 @@ class NavbarController {
   {
     'title': 'Origins',
     'state': 'entity.origin'
+  },
+  {
+    'title': 'Admin',
+    'state': 'admin'
   }];
 
   isCollapsed = false;

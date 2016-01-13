@@ -42,6 +42,15 @@ var all = {
         safe: true
       }
     }
+  },
+
+  // Calendar configuration
+  calendar: {
+    id: 'n6uv2beh9186bq34n20rmb4gro@group.calendar.google.com',
+    interviewDuration: {
+      skype: 30,
+      office: 120
+    }
   }
 };
 

@@ -57,13 +57,15 @@ var CandidateSchema = new mongoose.Schema({
       planned: Boolean,
       dateTime: Date,
       rating: Number,
-      notes: String
+      notes: String,
+      eventId: String,
     },
     office:{
       planned: Boolean,
       dateTime: Date,
       rating: Number,
-      notes: String
+      notes: String,
+      eventId: String,
     },
     proposal:{
       done: Boolean,
