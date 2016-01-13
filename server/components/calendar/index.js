@@ -6,10 +6,10 @@ import syncFor from '../../components/syncFor';
 import arrayDiff from 'diff-array-objs';
 
 class GCalendar {
-  constructor(cb, jsonKeyFile = 'privateSettings.json') {
+  constructor(cb) {
     this.cb = cb;
 
-    fs.readFile(config.root + '/.credentials/' + jsonKeyFile, (err, content) => {
+    fs.readFile(config.calendar.keyFile, (err, content) => {
       if (err) {
         throw 'Error loading client secret file: ' + err;
       }
