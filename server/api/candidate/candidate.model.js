@@ -1,6 +1,7 @@
 'use strict';
 
 var mongoose = require('bluebird').promisifyAll(require('mongoose'));
+import calendar from '../../components/calendar';
 
 var CandidateSchema = new mongoose.Schema({
   firstName: {
@@ -78,5 +79,29 @@ var CandidateSchema = new mongoose.Schema({
   }]
 
 });
+
+CandidateSchema
+  .pre('save', function(next) {
+    var cal = new calendar( () => {
+      cal.handleSkypeInterviews(this, (err, candidate) => {
+        cal.handleOfficeInterviews(this, (err, candidate) => {
+          next();
+        });
+      });
+    });
+  });
+
+CandidateSchema
+  .pre('remove', function(next) {
+    var cal = new calendar( () => {
+      if (this.visits) {
+        for (var i = 0; i < this.visits.length; i++) {
+          cal.removeInterviews(this.visits[i]);
+        }
+      }
+    });
+
+    next();
+  });
 
 export default mongoose.model('Candidate', CandidateSchema);

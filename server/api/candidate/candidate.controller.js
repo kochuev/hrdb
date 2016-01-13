@@ -124,22 +124,19 @@ export function create(req, res) {
 export function update(req, res) {
   var newCandidate = req.body;
 
-  var cal = new calendar( () => {
-    cal.handleSkypeInterviews(newCandidate, (err, candidate) => {
-      cal.handleOfficeInterviews(newCandidate, (err, candidate) => {
-        Candidate.findByIdAndUpdateAsync(req.params.id, newCandidate, {overwrite: true})
-          .then(handleEntityNotFound(res))
-          .then((oldCandidate)=> {
-            cal.handleRemovedVisits(oldCandidate.visits, newCandidate.visits);
-            Candidate.findByIdAsync(req.params.id)
-              .then(responseWithResult(res));
-          })
-          .then(responseWithResult(res))
-          .catch(handleError(res));
-
+  Candidate.findByIdAndUpdateAsync(req.params.id, newCandidate, {overwrite: true})
+    .then(handleEntityNotFound(res))
+    .then((oldCandidate)=> {
+      var cal = new calendar( () => {
+        if (oldCandidate && oldCandidate.visits)
+          cal.handleRemovedVisits(oldCandidate.visits, newCandidate.visits);
       });
-    });
-  });
+      Candidate.findByIdAsync(req.params.id)
+        .then(responseWithResult(res));
+    })
+    .then(responseWithResult(res))
+    .catch(handleError(res));
+
 }
 
 // Deletes a Candidate from the DB
