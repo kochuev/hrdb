@@ -107,7 +107,7 @@ class GCalendar {
   handleInterview(candidate, visit, event, type, cb) {
     var calendar = googleapis.calendar('v3');
 
-    if (!visit[type] || (!visit[type].planned && !visit[type].eventId)) {
+    if (visit.closed || !visit[type] || (!visit[type].planned && !visit[type].eventId)) {
       return cb(null, null);
     }
 

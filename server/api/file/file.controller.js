@@ -95,9 +95,9 @@ export function upload(req, res) {
 
   form.on('field' ,(name, value) => {
     if (name == 'candidateName') {
-      var cleanName = value.replace(/\s+/, '-');
-      cleanName = cleanName.replace(/[^a-zA-Z0-9\-]/ , '');
-      userPrefix = translit(cleanName);
+      userPrefix = translit(value)
+                    .replace(/\s+/, '-')
+                    .replace(/[^a-zA-Z0-9\-]/ , '');
     }
   });
 
