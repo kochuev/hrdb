@@ -93,6 +93,7 @@ CandidateSchema
 
 CandidateSchema
   .pre('remove', function(next) {
+    console.log('pre remove');
     var cal = new calendar( () => {
       if (this.visits) {
         for (var i = 0; i < this.visits.length; i++) {
@@ -102,6 +103,30 @@ CandidateSchema
     });
 
     next();
+  });
+
+CandidateSchema
+  .pre('findOneAndUpdate', function(next) {
+    var newCandidate = this.getUpdate();
+
+    var cal = new calendar( () => {
+      cal.handleSkypeInterviews(newCandidate, (err, candidate) => {
+        cal.handleOfficeInterviews(newCandidate, (err, candidate) => {
+          this.findOneAndUpdate({}, newCandidate);
+          next();
+        });
+      });
+    });
+  });
+
+CandidateSchema
+  .post('findOneAndUpdate', function(oldCandidate) {
+    var newCandidate = this.getUpdate();
+
+    var cal = new calendar( () => {
+      if (oldCandidate && oldCandidate.visits)
+        cal.handleRemovedVisits(oldCandidate.visits, newCandidate.visits);
+    });
   });
 
 export default mongoose.model('Candidate', CandidateSchema);

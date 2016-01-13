@@ -44,7 +44,7 @@ class GCalendar {
         return cb(null, candidate)
       } else {
         var event = {
-          summary: 'Skype interview with ' + candidate.firstName + ' ' + candidate.lastName + ' (' + (candidate.skypeId ? candidate.skypeId : 'unknown') + ')'
+          summary: 'Skype interview with ' + candidate.firstName + ' ' + candidate.lastName + (candidate.skypeId ? ' (' + candidate.skypeId + ')' : '')
         }
         this.handleInterview(candidate, candidate.visits[i], event, 'skype', (err, event) => {
           if (err) {
@@ -97,10 +97,17 @@ class GCalendar {
     }
   }
 
-  handleRemovedVisits(oldVists, newVisits) {
-    var diff = arrayDiff(oldVists, newVisits, '_id');
-    for (var i = 0; i < diff.removed.length; i++) {
-      this.removeInterviews(diff.removed[i]);
+  handleRemovedVisits(oldVisits, newVisits) {
+    for (var i = 0; i < oldVisits.length; i++) {
+      for (var j = 0; j < newVisits.length; j++) {
+        if (oldVisits[i]._id = newVisits[j]._id)
+          break;
+      }
+
+      if (j >= newVisits.length) {
+        console.log('removing visit');
+        this.removeInterviews(oldVisits[i]);
+      }
     }
   }
 
@@ -141,6 +148,9 @@ class GCalendar {
 
     event.start = { dateTime: startDate };
     event.end = { dateTime: endDate };
+
+    event.guestsCanInviteOthers = false;
+    event.guestsCanSeeOtherGuests = false;
 
     if (candidate.email)
       event.attendees = [ { email: candidate.email } ];

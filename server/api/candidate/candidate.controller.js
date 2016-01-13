@@ -126,15 +126,10 @@ export function update(req, res) {
 
   Candidate.findByIdAndUpdateAsync(req.params.id, newCandidate, {overwrite: true})
     .then(handleEntityNotFound(res))
-    .then((oldCandidate)=> {
-      var cal = new calendar( () => {
-        if (oldCandidate && oldCandidate.visits)
-          cal.handleRemovedVisits(oldCandidate.visits, newCandidate.visits);
-      });
+    .then(()=> {
       Candidate.findByIdAsync(req.params.id)
         .then(responseWithResult(res));
     })
-    .then(responseWithResult(res))
     .catch(handleError(res));
 
 }
