@@ -105,7 +105,6 @@ class GCalendar {
       }
 
       if (j >= newVisits.length) {
-        console.log('removing visit');
         this.removeInterviews(oldVisits[i]);
       }
     }

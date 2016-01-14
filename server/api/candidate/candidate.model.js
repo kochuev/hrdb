@@ -93,7 +93,6 @@ CandidateSchema
 
 CandidateSchema
   .pre('remove', function(next) {
-    console.log('pre remove');
     var cal = new calendar( () => {
       if (this.visits) {
         for (var i = 0; i < this.visits.length; i++) {
