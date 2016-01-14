@@ -4,7 +4,7 @@
 
 class CandidateListController {
 
-  constructor($http, $state, Modal) {
+  constructor($http, $state, Modal, Candidate) {
     this.$http = $http;
     this.Modal = Modal;
 
@@ -16,13 +16,15 @@ class CandidateListController {
 
     this.query = {};
     this.sort = {
-      field: 'lastVisitDate',
+      field: this.sortByLastVisitDate,
       reverse: true
     };
 
     $http.get('/api/candidates/').then(response => {
       this.candidates = response.data;
     });
+
+    //this.candidates  = Candidate.query();
 
     $http.get('/api/entities/agency').then(response => {
       this.agencies = {};
@@ -32,6 +34,14 @@ class CandidateListController {
       }
     });
 
+  }
+
+  sortByLastVisitDate(candidate) {
+    console.log('here!');
+    if  (candidate.lastVisitDate)
+      return candidate.lastVisitDate.getTime();
+    else
+      return 0;
   }
 
   loadMore(amount) {

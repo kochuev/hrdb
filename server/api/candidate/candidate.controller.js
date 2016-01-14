@@ -55,7 +55,7 @@ function removeEntity(res) {
 // Gets a list of Candidate
 export function index(req, res) {
   Candidate.aggregateAsync([
-    {
+     {
       $unwind: '$visits'
     },
     {
@@ -101,7 +101,22 @@ export function index(req, res) {
       }
     }
   ])
-    .then(responseWithResult(res))
+    .then((listWithVisits) => {
+      Candidate.findAsync({
+        visits: { $size: 0 }
+      },
+      {
+        _id: 1,
+        firstName: 1,
+        lastName: 1,
+        preferences: 1
+      })
+        .then((listWithoutVisits) => {
+          res.status(200).json(listWithVisits.concat(listWithoutVisits));
+        })
+        .catch(handleError(res));
+    })
+    //.then(responseWithResult(res))
     .catch(handleError(res));
 }
 
