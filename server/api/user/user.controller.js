@@ -106,11 +106,12 @@ export function changePassword(req, res, next) {
 /**
  * Toggles user activation
  */
-export function toogleActivation(req, res, next) {
-  var userId = req.params._id;
+export function toggleActivation(req, res, next) {
+  var userId = req.user._id;
 
   User.findByIdAsync(userId)
     .then(user => {
+      console.log(user);
       user.active = !user.active;
       console.log(user);
       return user.saveAsync()
