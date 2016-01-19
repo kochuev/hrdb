@@ -1,7 +1,7 @@
 .navbar-text {
   margin-left: 15px;
 }
-.rating .glyphicon, .glyphicon-download {
+.rating .glyphicon {
   margin-top: 5px;
   margin-bottom: 10px;
   font-size: 24px;
@@ -11,6 +11,9 @@
   font-weight: 400;
   line-height: 1;
   -webkit-font-smoothing: antialiased;
+}
+.download-button {
+  margin-top: 25px;
 }
 .visit {
   margin-top: 20px;

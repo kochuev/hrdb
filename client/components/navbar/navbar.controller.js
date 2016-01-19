@@ -24,7 +24,7 @@ class NavbarController {
     'state': 'admin'
   }];
 
-  isCollapsed = false;
+  isCollapsed = true;
   //end-non-standard
 
   constructor(Auth) {
