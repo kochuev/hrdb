@@ -21,5 +21,7 @@ module.exports = {
           process.env.OPENSHIFT_APP_NAME ||
           process.env.MONGO_URL ||
           'mongodb://hrdbmongo/hrdb'
-  }
+  },
+
+  uploadDir: '/home/hrdb/uploads'
 };
