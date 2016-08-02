@@ -9,17 +9,31 @@
         <button class="btn btn-default pull-right" ng-click="vm.$state.go('candidate.list')">Back to list</button>
       </div>
     </div>
+    <div class="form-group" ng-show="vm.candidateMayExistsAs.length">
+      <div class="col-sm-2"></div>
+      <div class="col-sm-10">
+        <div class="alert alert-warning">
+          <strong>Watch out!</strong> Candidate may already exist as one of the following:
+          <span ng-repeat="candidateDuplicate in vm.candidateMayExistsAs">
+            <a ui-sref="candidate.details( {id: candidateDuplicate._id})" target="_blank">
+              {{candidateDuplicate.firstName}} {{candidateDuplicate.lastName}}
+            </a>
+            <span ng-if="!$last">,</span>
+          </span>
+        </div>
+      </div>
+    </div>
     <div class="form-group has-feedback" ng-class="{ 'has-error': vm.personInfoForm.firstName.$invalid}">
       <label class="col-sm-2 control-label">First Name</label>
       <div class="col-sm-10">
-        <input type="text" class="form-control" name="firstName" placeholder="First Name" ng-model="vm.candidate.firstName" required>
+        <input type="text" class="form-control" name="firstName" placeholder="First Name" ng-model="vm.candidate.firstName" ng-blur="vm.checkIfCandidateMayExist()" required>
         <i class="glyphicon glyphicon-user form-control-feedback"></i>
       </div>
     </div>
     <div class="form-group has-feedback" ng-class="{ 'has-error': vm.personInfoForm.lastName.$invalid}">
       <label class="col-sm-2 control-label">Last Name</label>
       <div class="col-sm-10">
-        <input type="text" class="form-control" name="lastName" placeholder="Last Name" ng-model="vm.candidate.lastName" required>
+        <input type="text" class="form-control" name="lastName" placeholder="Last Name" ng-model="vm.candidate.lastName" ng-blur="vm.checkIfCandidateMayExist()" required>
         <i class="glyphicon glyphicon-user form-control-feedback"></i>
       </div>
     </div>
@@ -34,14 +48,14 @@
     <div class="form-group has-feedback" ng-class="{ 'has-error': vm.personInfoForm.email.$invalid && vm.personInfoForm.email.$dirty }">
       <label class="col-sm-2 control-label">Email</label>
       <div class="col-sm-10">
-        <input type="email" class="form-control" name="email" placeholder="Email " ng-model="vm.candidate.email">
+        <input type="email" class="form-control" name="email" placeholder="Email " ng-model="vm.candidate.email" ng-blur="vm.checkIfCandidateMayExist()">
         <i class="fa fa-envelope form-control-feedback"></i>
       </div>
     </div>
     <div class="form-group has-feedback">
       <label for="skypeId" class="col-sm-2 control-label">Skype ID</label>
       <div class="col-sm-10">
-        <input type="text" class="form-control" id="skypeId" placeholder="Skype ID" ng-model="vm.candidate.skypeId">
+        <input type="text" class="form-control" name="skypeId" id="skypeId" placeholder="Skype ID" ng-model="vm.candidate.skypeId" ng-blur="vm.checkIfCandidateMayExist()">
         <i class="fa fa-skype form-control-feedback"></i>
       </div>
     </div>

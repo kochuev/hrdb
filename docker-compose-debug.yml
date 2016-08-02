@@ -2,8 +2,9 @@ hrdb:
   build: .
   environment:
     - TZ=Europe/Kiev
-  command: ["grunt", "serve"]
+  command: ["grunt", "serve:debug"]
   ports:
+   - "8080:8080"
    - "9000:9000"
    - "35729:35729"
    - "5858:5858"

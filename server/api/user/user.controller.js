@@ -111,9 +111,7 @@ export function toggleActivation(req, res, next) {
 
   User.findByIdAsync(userId)
     .then(user => {
-      console.log(user);
       user.active = !user.active;
-      console.log(user);
       return user.saveAsync()
         .then(() => {
           res.status(204).end();

@@ -11,7 +11,18 @@ angular.module('hrDbApp')
         templateUrl: 'app/candidate/list.html',
         controller: 'CandidateListController',
         controllerAs: 'vm',
-        authenticate: 'user'
+        authenticate: 'user',
+        resolve: {
+          'agencies': (Entity) => {
+            return Entity.getAgencies();
+          },
+          'positions': (Entity) => {
+            return Entity.getPositions();
+          },
+          'candidatesObj': ($http) => {
+            return $http.get('/api/candidates/')
+          }
+        }
       })
       .state('candidate.new', {
         url: '/candidate/new',

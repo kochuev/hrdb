@@ -40,4 +40,13 @@ li[data-closed="rejected"] > a {
   display: block;
   font-size: 12px;
 }
+table.candidate-list tbody tr {
+  cursor: pointer;
+}
+th.remove-filters {
+  vertical-align: middle;
+}
+th.remove-filters a {
+  color:rgb(209, 91, 71);
+}
 

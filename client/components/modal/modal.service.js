@@ -67,6 +67,49 @@ angular.module('hrDbApp')
               del.apply(event, args);
             });
           };
+        },
+
+        /**
+         * Create a function to open a page leave confirmation modal (ex. ng-click='myModalFn(name, arg1, arg2...)')
+         * @param  {Function} del - callback, ran when page leave is confirmed
+         * @return {Function}     - the function to open the modal (ex. myModalFn)
+         */
+        pageLeave(leave = angular.noop) {
+          /**
+           * Open a delete confirmation modal
+           * @param  {String} name   - name or info to show on modal
+           * @param  {All}           - any additional args are passed straight to del callback
+           */
+          return function() {
+            var args = Array.prototype.slice.call(arguments),
+              text = args.shift(),
+              pageLeave;
+
+            pageLeave = openModal({
+              modal: {
+                dismissable: true,
+                title: 'Confirm leaving the page',
+                html: '<p><strong>' + text + '</strong> Are you sure you want to leave the page ?</p>',
+                buttons: [{
+                  classes: 'btn-danger',
+                  text: 'Leave',
+                  click: function(e) {
+                    pageLeave.close(e);
+                  }
+                }, {
+                  classes: 'btn-default',
+                  text: 'Stay',
+                  click: function(e) {
+                    pageLeave.dismiss(e);
+                  }
+                }]
+              }
+            }, 'modal-warning');
+
+            pageLeave.result.then(function(event) {
+              leave.apply(event, args);
+            });
+          };
         }
       }
     };

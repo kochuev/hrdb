@@ -25,7 +25,16 @@ class VisitController {
        return this.visitInfoForm.$valid;
      };
 
-  }
+     this.visit.isDirty = () => {
+       return this.visitInfoForm.$dirty;
+     };
+
+     this.visit.setPristine = () => {
+       this.visitInfoForm.$setPristine();
+     };
+
+
+   }
 
   uploadCv(file) {
     if (!file) return;

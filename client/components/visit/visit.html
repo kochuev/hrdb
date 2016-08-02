@@ -176,7 +176,7 @@
         </div>
         <div class="form-group col-sm-4" ng-class="{ 'has-error': vm.visitInfoForm.visitProposalProbationDuration.$invalid }">
           <label class="control-label">Probation period duration</label>
-          <select class="form-control" name="visitProposalProbationDuration" ng-model="vm.visit.proposal.probationDuration" ng-readonly="vm.visit.closed" required="proposal.done">
+          <select class="form-control" name="visitProposalProbationDuration" ng-model="vm.visit.proposal.probationDuration" ng-readonly="vm.visit.closed" required="proposal.done" convert-to-number>
             <option value="1">1 month</option>
             <option value="2">2 months</option>
             <option value="3">3 months</option>

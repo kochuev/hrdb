@@ -64,7 +64,7 @@ describe('User Model', function() {
     it('should remain the same hash unless the password is updated', function() {
       user.name = 'Test User';
       return user.saveAsync()
-        .spread(function(u) {
+        .then(function(u) {
           return u.authenticate('password');
         }).should.eventually.be.true;
     });

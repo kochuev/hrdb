@@ -52,6 +52,16 @@ var all = {
       skype: 30,
       office: 120
     }
+  },
+
+  skypeBot: {
+    connectorConfig: {
+      appId: 'bcba5945-be5a-41ab-b64b-674a9f8a42d0',
+      appPassword: 'mTtsRNiEG9bhMe5cn5EkDfi'
+    },
+    botId: 'hr_bot',
+    hrConversation: {id: '19:5353023a4c9a4412825f8200978f8834@thread.skype'},
+    botDisplayName: 'hrbot'
   }
 };
 

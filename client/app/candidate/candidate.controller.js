@@ -4,19 +4,35 @@
 
 class CandidateController {
 
-  constructor($filter, $http, $state, $stateParams, $scope, Modal, candidateObj) {
+  constructor($filter, $http, $state, $stateParams, $scope, $q, Modal, Search, candidateObj) {
     this.$filter = $filter;
     this.$http = $http;
     this.$state = $state;
     this.$stateParams = $stateParams;
     this.Modal = Modal;
+    this.Search = Search;
+    this.$q = $q;
 
     this.spinner = false;
 
+    this.personInfoForm = null;
+
     this.candidate = candidateObj.data;
+
+    this.candidateMayExistsAs = [];
 
     this.removeVisit = Modal.confirm.delete((index) => {
       this.candidate.visits.splice(index, 1);
+    });
+
+    this.onStateChangeOff = $scope.$on('$stateChangeStart', (event, toState, toParams) => {
+        if (this.isDirty()) {
+          event.preventDefault();
+          Modal.confirm.pageLeave(() => {
+            this.onStateChangeOff();
+            this.$state.go(toState, toParams);
+          })('You have unsaved changes');
+        }
     });
 
     $scope.$watch(() => this.candidate.visits, () => {
@@ -33,9 +49,11 @@ class CandidateController {
 
   save(backToList) {
     this.spinner = true;
+    this.candidateMayExistsAs = null;
 
     if (this.$state.is('candidate.new')) {
       this.$http.post('/api/candidates', this.candidate).then(response => {
+        this.setPristine();
         if (backToList)
           this.$state.go('candidate.list');
         else
@@ -43,13 +61,38 @@ class CandidateController {
       });
     } else if (this.$state.is('candidate.details')) {
       this.$http.put('/api/candidates/' + this.$stateParams.id, this.candidate).then(response => {
-        this.candidate = response.data;
-        if (backToList)
+        this.setPristine();
+        if (backToList) {
           this.$state.go('candidate.list');
-        else
+        } else {
+          this.candidate = response.data;
           this.spinner = false;
+        }
       });
     }
+  }
+
+  checkIfCandidateMayExist() {
+    var allIdFieldsAreEmpty = ['lastName', 'email', 'skypeId'].every(elm => !this.candidate[elm]);
+    var allIdFieldsArePristine = ['firstName', 'lastName', 'email', 'skypeId'].every(elm => this.personInfoForm[elm].$pristine);
+
+    if (allIdFieldsAreEmpty || allIdFieldsArePristine) {
+      this.candidateMayExistsAs = [];
+      return;
+    }
+
+    this.$q
+      .all([this.Search.getPossibleDuplicatesByName(this.candidate), this.Search.getPossibleDuplicatesByContactDetails(this.candidate)])
+      .then(possibleDuplicates => {
+        return _.flatten(possibleDuplicates);
+      })
+      .then(possibleDuplicatesFlat => {
+        return _.uniq(possibleDuplicatesFlat, elm => elm._id);
+      })
+      .then(possibleDuplicatesUniq => {
+        this.candidateMayExistsAs = possibleDuplicatesUniq;
+      });
+
   }
 
   addVisit() {
@@ -84,7 +127,6 @@ class CandidateController {
   }
 
   hasOpenVisits() {
-    //console.log(this.$filter('hasOpenVisits')(this.candidate.visits));
     return this.$filter('hasOpenVisits')(this.candidate.visits);
   }
 
@@ -98,6 +140,27 @@ class CandidateController {
     }
 
     return true;
+  }
+
+  isDirty() {
+    if (this.personInfoForm.$dirty)
+      return true;
+
+    for (var i = 0; i < this.candidate.visits.length; i++ ) {
+      if (this.candidate.visits[i].isDirty === undefined || this.candidate.visits[i].isDirty())
+        return true;
+    }
+
+    return false;
+  }
+
+  setPristine() {
+    this.personInfoForm.$setPristine();
+    for (var i = 0; i < this.candidate.visits.length; i++ ) {
+      if (this.candidate.visits[i].setPristine !== undefined)
+        this.candidate.visits[i].setPristine()
+    }
+
   }
 
 }

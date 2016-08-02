@@ -1,141 +1,154 @@
 import googleapis from 'googleapis';
 import fs from 'fs';
-import path from 'path';
 import config from '../../config/environment';
-import syncFor from '../../components/syncFor';
-import arrayDiff from 'diff-array-objs';
+import Bluebird from 'bluebird';
+import Position from '../../api/candidate/position.model';
+import EventEmitter from 'events';
 
-class GCalendar {
-  constructor(cb) {
-    this.cb = cb;
+class GCalendar extends EventEmitter {
 
-    fs.readFile(config.calendar.keyFile, (err, content) => {
-      if (err) {
-        throw 'Error loading client secret file: ' + err;
-      }
-      this.authorize(JSON.parse(content));
+  constructor() {
+    super();
+    this.credentials = JSON.parse(fs.readFileSync(config.calendar.keyFile));
+    this.oauth2Client = new googleapis.auth.OAuth2();
+    this.eventsApi = Bluebird.promisifyAll(googleapis.calendar('v3').events);
+  }
+
+  authorize() {
+    return new Bluebird((resolve, reject) => {
+      var jwt = new googleapis.auth.JWT(
+        this.credentials.client_email,
+        null,
+        this.credentials.private_key,
+        ['https://www.googleapis.com/auth/calendar']);
+
+      jwt.authorize((err, tkn) => {
+        if (err)
+          return reject(err);
+
+        this.oauth2Client.setCredentials({
+          access_token: tkn.access_token
+        });
+
+        return resolve(this.oauth2Client)
+      })
     });
   }
 
-  authorize(credentials) {
-    var OAuth2 = googleapis.auth.OAuth2;
-    this.oauth2Client = new OAuth2();
-
-    var jwt = new googleapis.auth.JWT(
-      credentials.client_email,
-      null,
-      credentials.private_key,
-      ['https://www.googleapis.com/auth/calendar']);
-        jwt.authorize((err, result) => {
-          this.oauth2Client.setCredentials({
-            access_token: result.access_token
-          });
-
-          this.cb();
-        });
+  handleSkypeInterviews(candidate) {
+    return Bluebird.resolve(candidate.visits)
+      .map(visit => {
+        return Position.findByIdAsync(visit.general._position)
+          .then(position => {
+            return {
+              visit: visit,
+              position: position
+            }
+          })
+      })
+      .map(visitAndPosition => {
+        let event = {
+          summary: 'Skype interview with ' + candidate.firstName + ' ' + candidate.lastName + (candidate.skypeId ? ' (' + candidate.skypeId + ')' : '') + ' on ' + visitAndPosition.position.name + ' position'
+        };
+        return this.handleInterview(candidate, visitAndPosition.visit, event, 'skype');
+      })
+      .all()
+      .then(events => {
+        return candidate;
+      });
   }
 
-  handleSkypeInterviews(candidate, cb) {
-    if (!candidate.visits.length)
-      return cb(null, candidate);
-
-    syncFor(0, candidate.visits.length, "start", (i, status, call) => {
-      if (status === "done") {
-        return cb(null, candidate)
-      } else {
-        var event = {
-          summary: 'Skype interview with ' + candidate.firstName + ' ' + candidate.lastName + (candidate.skypeId ? ' (' + candidate.skypeId + ')' : '')
-        }
-        this.handleInterview(candidate, candidate.visits[i], event, 'skype', (err, event) => {
-          if (err) {
-            return cb(err, candidate)
-          }
-          call('next');
-        });
-      }
-    })
-  }
-
-  handleOfficeInterviews(candidate, cb) {
-    if (!candidate.visits.length)
-      return cb(null, candidate);
-
-    syncFor(0, candidate.visits.length, "start", (i, status, call) => {
-      if (status === "done") {
-        return cb(null, candidate)
-      } else {
-        var event = {
-          summary: 'Office interview with ' + candidate.firstName + ' ' + candidate.lastName
-        }
-        this.handleInterview(candidate, candidate.visits[i], event, 'office', (err, event) => {
-          if (err) {
-            return cb(err, candidate)
-          }
-          call('next');
-        });
-      }
-    })
+  handleOfficeInterviews(candidate) {
+    return Bluebird.resolve(candidate.visits)
+      .map(visit => {
+        return Position.findByIdAsync(visit.general._position)
+          .then(position => {
+            return {
+              visit: visit,
+              position: position
+            }
+          })
+      })
+      .map(visitAndPosition => {
+        let event = {
+          summary: 'Office interview with ' + candidate.firstName + ' ' + candidate.lastName + ' on ' + visitAndPosition.position.name + ' position'
+        };
+        return this.handleInterview(candidate, visitAndPosition.visit, event, 'office');
+      })
+      .all()
+      .then(events => {
+        return candidate;
+      });
   }
 
   removeInterviews(visit) {
-    var calendar = googleapis.calendar('v3');
-
     if (visit.skype.eventId) {
-      calendar.events.delete({
+      return this.eventsApi.deleteAsync({
         auth: this.oauth2Client,
         calendarId: config.calendar.id,
-        eventId: visit.skype.eventId,
+        eventId: visit.skype.eventId
       });
     }
 
     if (visit.office.eventId) {
-      calendar.events.delete({
+      return this.eventsApi.deleteAsync({
         auth: this.oauth2Client,
         calendarId: config.calendar.id,
-        eventId: visit.office.eventId,
+        eventId: visit.office.eventId
       });
     }
+
+    return Bluebird.resolve(null)
   }
 
   handleRemovedVisits(oldVisits, newVisits) {
-    for (var i = 0; i < oldVisits.length; i++) {
-      for (var j = 0; j < newVisits.length; j++) {
-        if (oldVisits[i]._id = newVisits[j]._id)
-          break;
-      }
+    Bluebird.resolve(oldVisits)
+      .filter(oldVisit => {
+        for (var j = 0; j < newVisits.length; j++) {
+          if (oldVisit._id = newVisits[j]._id)
+            return false;
+        }
 
-      if (j >= newVisits.length) {
-        this.removeInterviews(oldVisits[i]);
-      }
-    }
+        return this.removeInterviews(oldVisit);
+      })
+      .all();
   }
 
-  handleInterview(candidate, visit, event, type, cb) {
-    var calendar = googleapis.calendar('v3');
-
+  handleInterview(candidate, visit, event, type) {
     if (visit.closed || !visit[type] || (!visit[type].planned && !visit[type].eventId)) {
-      return cb(null, null);
+      return Bluebird.resolve('null');
     }
 
     if (!visit[type])
       visit[type] = {};
 
+    // remove event as interview was cancelled
     if (!visit[type].planned && visit[type].eventId) {
-      calendar.events.delete({
+      return this.eventsApi.getAsync({
         auth: this.oauth2Client,
         calendarId: config.calendar.id,
-        eventId: visit[type].eventId,
-        sendNotifications: true,
-      }, (err) => {
-        visit[type].eventId = null;
-        if (err) {
-          console.error('There was an error contacting the Calendar service: ' + err);
-          return cb(err, null);
-        }
-        return cb(null, null);
-      });
-
-      return;
+        eventId: visit[type].eventId
+      })
+        .then(oldEvent =>{
+          this.emit('interviewCanceled', {
+            type: type,
+            candidate: candidate,
+            oldDateTime: new Date(Date.parse(oldEvent.start.dateTime))
+          });
+          return oldEvent;
+        })
+        .then(oldEvent => {
+          return this.eventsApi.deleteAsync({
+            auth: this.oauth2Client,
+            calendarId: config.calendar.id,
+            eventId: oldEvent.id,
+            sendNotifications: true
+          })
+        })
+        //.catch(this.handleApiError)
+        .finally(() => {
+          visit[type].eventId = null;
+        })
     }
     var milliseconds = Date.parse(visit[type].dateTime);
     var startDate =  new Date(milliseconds);
@@ -143,7 +156,7 @@ class GCalendar {
     endDate.setMinutes(endDate.getMinutes() + config.calendar.interviewDuration[type]);
 
     if (startDate < Date.now())
-      return cb(null, null);
+      return Bluebird.resolve('null');
 
     event.start = { dateTime: startDate };
     event.end = { dateTime: endDate };
@@ -156,37 +169,57 @@ class GCalendar {
 
     // no event id, so create new
     if (!visit[type].eventId) {
-      calendar.events.insert({
+      this.emit('interviewAdded', {
+          type: type,
+          candidate: candidate,
+          newDateTime: event.start.dateTime
+      });
+
+      return this.eventsApi.insertAsync({
         auth: this.oauth2Client,
         calendarId: config.calendar.id,
         resource: event,
-        sendNotifications: true,
-      }, (err, event) => {
-        if (err) {
-          console.error('There was an error contacting the Calendar service: ' + err);
-          return cb(err, null);
-        }
-        visit[type].eventId = event.id;
-        return cb(null, event);
-      });
+        sendNotifications: true
+      })
+        .then(event => {
+          visit[type].eventId = event.id;
+          return event;
+        });
+        //.catch(this.handleApiError);
+
     // update existing event
     } else {
-      calendar.events.update({
+      return this.eventsApi.getAsync({
         auth: this.oauth2Client,
         calendarId: config.calendar.id,
-        eventId: visit[type].eventId,
-        resource: event,
-        sendNotifications: true,
-      }, (err, event) => {
-        if (err) {
-          console.error('There was an error contacting the Calendar service: ' + err);
-          return cb(err, null);
-        }
-        return cb(null, event);
-      });
+        eventId: visit[type].eventId
+      })
+        .then(oldEvent => {
+          let oldStartDate = Date.parse(oldEvent.start.dateTime);
+          let newStartDate = event.start.dateTime.getTime();
+
+          if (oldStartDate != newStartDate) {
+            this.emit('interviewChanged', {
+              type: type,
+              candidate: candidate,
+              newDateTime: event.start.dateTime,
+              oldDateTime: new Date(oldStartDate)
+            });
+          }
+          return oldEvent;
+        })
+        .then(oldEvent => {
+          return this.eventsApi.updateAsync({
+            auth: this.oauth2Client,
+            calendarId: config.calendar.id,
+            eventId: oldEvent.id,
+            resource: event,
+            sendNotifications: true
+          });
+        });
+        //.catch(this.handleApiError);
     }
   }
-
 }
 
-export default GCalendar;
+export default new GCalendar();

@@ -1,7 +1,9 @@
 'use strict';
 
 var mongoose = require('bluebird').promisifyAll(require('mongoose'));
+import fs from 'fs';
 import calendar from '../../components/calendar';
+import Bluebird from 'bluebird';
 
 var CandidateSchema = new mongoose.Schema({
   firstName: {
@@ -82,50 +84,227 @@ var CandidateSchema = new mongoose.Schema({
 
 CandidateSchema
   .pre('save', function(next) {
-    var cal = new calendar( () => {
-      cal.handleSkypeInterviews(this, (err, candidate) => {
-        cal.handleOfficeInterviews(this, (err, candidate) => {
-          next();
-        });
+    calendar.authorize()
+      .then(() => {
+        return calendar.handleSkypeInterviews(this.toJSON());
+      })
+      .then(() => {
+        return calendar.handleOfficeInterviews(this.toJSON());
+      })
+      .then(next)
+      .catch(err => {
+        throw new Error(err);
       });
-    });
   });
 
 CandidateSchema
   .pre('remove', function(next) {
-    var cal = new calendar( () => {
-      if (this.visits) {
-        for (var i = 0; i < this.visits.length; i++) {
-          cal.removeInterviews(this.visits[i]);
+    calendar.authorize()
+      .then(() => {
+        if (this.visits) {
+          for (var i = 0; i < this.visits.length; i++) {
+            calendar.removeInterviews(this.visits[i]);
+          }
         }
-      }
-    });
-
-    next();
+      })
+      .then(next)
+      .catch(err => {
+        next(err);
+      });
   });
 
 CandidateSchema
   .pre('findOneAndUpdate', function(next) {
     var newCandidate = this.getUpdate();
 
-    var cal = new calendar( () => {
-      cal.handleSkypeInterviews(newCandidate, (err, candidate) => {
-        cal.handleOfficeInterviews(newCandidate, (err, candidate) => {
-          this.findOneAndUpdate({}, newCandidate);
-          next();
-        });
+    calendar.authorize()
+      .then(() => {
+        return calendar.handleSkypeInterviews(newCandidate);
+      })
+      .then(() => {
+        return calendar.handleOfficeInterviews(newCandidate);
+      })
+      .then(() => {
+        this.findOneAndUpdate({}, newCandidate);
+        next();
+      })
+      .catch(err => {
+        next(err);
       });
-    });
   });
 
 CandidateSchema
-  .post('findOneAndUpdate', function(oldCandidate) {
+  .post('findOneAndUpdate', function(oldCandidate, next) {
     var newCandidate = this.getUpdate();
 
-    var cal = new calendar( () => {
-      if (oldCandidate && oldCandidate.visits)
-        cal.handleRemovedVisits(oldCandidate.visits, newCandidate.visits);
-    });
+    calendar.authorize()
+      .then(() => {
+        if (oldCandidate && oldCandidate.visits)
+          return calendar.handleRemovedVisits(oldCandidate.visits, newCandidate.visits);
+        else
+          return null;
+      })
+      .then(removedVisits => {
+        next();
+      })
+      .catch(err => {
+        next(err);
+      });
   });
+
+CandidateSchema.statics.random = function() {
+  return this.count()
+    .then(count => {
+      return Math.floor(Math.random() * count)
+    })
+    .then(rand => {
+      return this.findOne().skip(rand);
+    })
+};
+
+CandidateSchema.statics.getPendingDecisions = function() {
+  let dateUntil = new Date();
+  dateUntil.setHours(0,0,0,0);
+
+  return this.aggregateAsync([
+    {
+      $unwind: "$visits"
+    },
+    {
+      $match: {
+        "visits.closed": false,
+        $or: [
+          {
+            $and: [
+              {
+                "visits.proposal.dateTime": {
+                  $lt: dateUntil
+                }
+              },
+              {"visits.proposal.done": true}
+            ]
+          },
+          {
+            $and: [
+              {
+                "visits.office.dateTime": {
+                  $lt: dateUntil
+                }
+              },
+              {"visits.proposal.done": {$ne: true}},
+              {"visits.office.planned": true}
+            ]
+          },
+          {
+            $and: [
+              {
+                "visits.skype.dateTime": {
+                  $lt: dateUntil
+                }
+              },
+              {"visits.proposal.done": {$ne: true}},
+              {"visits.office.planned": {$ne: true}},
+              {"visits.skype.planned": true}
+            ]
+          },
+          {
+            $and: [
+              {"visits.proposal.done": {$ne: true}},
+              {"visits.office.planned": {$ne: true}},
+              {"visits.skype.planned": {$ne: true}}
+            ]
+          }
+        ]
+      }
+    },
+    {
+      $project: {
+        firstName: 1,
+        lastName: 1,
+        _position: '$visits.general._position',
+        'pending.proposal': {
+          $cond: {
+            if: {$eq: ['$visits.proposal.done', true]},
+            then: '$visits.proposal.dateTime',
+            else: {$literal: false}
+          }
+        },
+        'pending.office': {
+          $cond: {
+            if: {$eq: ['$visits.office.planned', true]},
+            then: '$visits.office.dateTime',
+            else: {$literal: false}
+          }
+        },
+        'pending.skype': {
+          $cond: {
+            if: {$eq: ['$visits.skype.planned', true]},
+            then: '$visits.skype.dateTime',
+            else: {$literal: false}
+          }
+        }
+      }
+    }
+  ]);
+}
+
+CandidateSchema.statics.getTodayInterviews = function() {
+  let dateFrom = new Date();
+  dateFrom.setHours(0,0,0,0);
+  var dateTo = new Date();
+  dateTo.setHours(24,0,0,0);
+
+  return this.aggregateAsync([
+    {
+      $unwind: "$visits"
+    },
+    {
+      $match: {
+        "visits.closed": false,
+        $or: [
+          {
+            $and: [
+              {
+                "visits.office.dateTime": {
+                  $gte: dateFrom,
+                  $lt: dateTo
+                }
+              },
+              {"visits.office.planned": true}
+            ]
+          },
+          {
+            $and: [
+              {
+                "visits.skype.dateTime": {
+                  $gte: dateFrom,
+                  $lt: dateTo
+                }
+              },
+              {"visits.skype.planned": true}
+            ]
+          }
+        ]
+      },
+    },
+    {
+      $project: {
+        firstName: 1,
+        lastName: 1,
+        _position: '$visits.general._position',
+        'skype.dateTime': '$visits.skype.dateTime',
+        'office.dateTime': '$visits.office.dateTime',
+        interviewType: {
+          $cond: {
+            if: { $eq: ['$visits.office.planned', true] },
+            then: {$literal: 'office'},
+            else: {$literal: 'skype'}
+          }
+        }
+      }
+    }
+  ]);
+}
+
 
 export default mongoose.model('Candidate', CandidateSchema);

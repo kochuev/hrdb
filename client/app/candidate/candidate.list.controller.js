@@ -4,34 +4,60 @@
 
 class CandidateListController {
 
-  constructor($http, $state, Modal) {
+  constructor($http, $state, $scope, $cookies, Modal, candidatesObj, agencies, positions, appConfig) {
     this.$http = $http;
+    this.$cookies = $cookies;
     this.Modal = Modal;
 
     this.state = $state;
 
-    this.candidates = [];
+    this.candidates = candidatesObj.data;
+    this.agencies = agencies;
+    this.positions = positions;
+    this.appConfig = appConfig;
 
-    this.limit = 50;
+    // Limit
+    this.limit = this.$cookies.get('list.limit');
+    if (!this.limit)
+        this.limit = this.appConfig.listPageSize;
 
+    $scope.$watch(() => this.limit, () => {
+      this.$cookies.put('list.limit', this.limit);
+    });
+
+    // Query filter
+    this.query = this.$cookies.getObject('list.query');
+    if (!this.query)
+        this.query = {};
+
+    $scope.$watch(() => this.query, () => {
+      this.$cookies.putObject('list.query', this.query);
+    }, true);
+
+    //Sorting
+    this.sort = this.$cookies.getObject('list.sort');
+    if (!this.sort) {
+      this.sort = {
+        field: this.sortByLastVisitDate,
+        reverse: true
+      };
+    }
+
+    $scope.$watch(() => this.sort, () => {
+      this.$cookies.putObject('list.sort', this.sort);
+    }, true);
+
+  }
+
+  removeFilters() {
     this.query = {};
+
+    this.limit = this.appConfig.listPageSize;
+
     this.sort = {
       field: this.sortByLastVisitDate,
       reverse: true
     };
-
-    $http.get('/api/candidates/').then(response => {
-      this.candidates = response.data;
-    });
-
-    $http.get('/api/entities/agency').then(response => {
-      this.agencies = {};
-      for (var i = 0; i < response.data.length; i++)
-      {
-          this.agencies[response.data[i]._id] =  response.data[i];
-      }
-    });
-
   }
 
   sortByLastVisitDate(candidate) {

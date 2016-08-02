@@ -27,6 +27,7 @@ export default function(app) {
   app.set('views', config.root + '/server/views');
   app.engine('html', require('ejs').renderFile);
   app.set('view engine', 'html');
+  //app.use(require('express-domain-middleware'));
   app.use(compression());
   app.use(bodyParser.urlencoded({ extended: false }));
   app.use(bodyParser.json());
@@ -51,19 +52,28 @@ export default function(app) {
    * Lusca - express server security
    * https://github.com/krakenjs/lusca
    */
+  function excludeLuscaForSkype() {
+    return function(req, res, next) {
+      if (req.path === '/api/bot' && req.method === 'POST') {
+        next();
+      } else {
+        lusca({
+          csrf: {
+            angular: true
+          },
+          xframe: 'SAMEORIGIN',
+          hsts: {
+            maxAge: 31536000, //1 year, in seconds
+            includeSubDomains: true,
+            preload: true
+          },
+          xssProtection: true
+        })(req, res, next);
+      }
+    }
+  }
   if ('test' !== env) {
-    app.use(lusca({
-      csrf: {
-        angular: true
-      },
-      xframe: 'SAMEORIGIN',
-      hsts: {
-        maxAge: 31536000, //1 year, in seconds
-        includeSubDomains: true,
-        preload: true
-      },
-      xssProtection: true
-    }));
+    app.use(excludeLuscaForSkype());
   }
 
   app.set('appPath', path.join(config.root, 'client'));

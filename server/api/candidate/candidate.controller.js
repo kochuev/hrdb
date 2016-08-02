@@ -1,8 +1,7 @@
 'use strict';
 
-import _ from 'lodash';
+import Bluebird from 'bluebird';
 import Candidate from './candidate.model';
-import calendar from '../../components/calendar';
 
 function handleError(res, statusCode) {
   statusCode = statusCode || 500;
@@ -22,7 +21,7 @@ function responseWithResult(res, statusCode) {
 
 function handleEntityNotFound(res) {
   return function(entity) {
-    if (!entity) {
+    if (!entity || entity.length === 0) {
       res.status(404).end();
       return null;
     }
@@ -54,69 +53,101 @@ function removeEntity(res) {
 
 // Gets a list of Candidate
 export function index(req, res) {
-  Candidate.aggregateAsync([
-     {
-      $unwind: '$visits'
-    },
-    {
-      $project: {
-        firstName: 1,
-        lastName: 1,
-        preferences: 1,
-        pending: {
-          $cond: { if: { $ne: ['$visits.closed', false] }, then: 0, else: 1 }
+  Bluebird
+    .all([
+      // list with visits
+      Candidate.aggregateAsync([
+        {
+          $unwind: '$visits'
         },
-        visitDate: '$visits.general.date',
-        _agency: '$visits.general._agency'
-      }
-    },
-    {
-      $group:{
-        _id:{
-          _id: '$_id',
-          firstName:'$firstName',
-          lastName: '$lastName',
-          preferences: '$preferences'
+        {
+          $project: {
+            firstName: 1,
+            lastName: 1,
+            preferences: 1,
+            pending: {
+              $cond: { if: { $ne: ['$visits.closed', false] }, then: 0, else: 1 }
+            },
+            visitDate: '$visits.general.date',
+            _position: '$visits.general._position',
+            _agency: '$visits.general._agency',
+            interviewStatus: {
+              $cond: {
+                if: { $eq: ['$visits.proposal.done', true] },
+                then: ['proposal'],
+                else: {
+                  $cond: {
+                    if: { $eq: ['$visits.office.planned', true] },
+                    then: ['office', '$visits.office.dateTime'],
+                    else: {
+                      $cond: {
+                        if: { $eq: ['$visits.skype.planned', true] },
+                        then: ['skype', '$visits.skype.dateTime'],
+                        else: ['cv']
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
         },
-        pending:{
-          $max: '$pending'
+        {
+          $group:{
+            _id:{
+              _id: '$_id',
+              firstName:'$firstName',
+              lastName: '$lastName',
+              preferences: '$preferences'
+            },
+            pending:{
+              $max: '$pending'
+            },
+            lastVisitDate:{
+              $last: '$visitDate'
+            },
+            _lastVisitPosition:{
+              $last: '$_position'
+            },
+            _lastVisitAgency:{
+              $last: '$_agency'
+            },
+            interviewStatus:{
+              $last: '$interviewStatus'
+            }
+          }
         },
-        lastVisitDate:{
-          $last: '$visitDate'
-        },
-        _lastVisitAgency:{
-          $last: '$_agency'
+        {
+          $project:{
+            _id: '$_id._id',
+            firstName: '$_id.firstName',
+            lastName: '$_id.lastName',
+            preferences: '$_id.preferences',
+            pending: 1,
+            lastVisitDate: 1,
+            _lastVisitPosition: 1,
+            _lastVisitAgency: 1,
+            interviewStatus: 1
+          }
         }
-      }
-    },
-    {
-      $project:{
-        _id: '$_id._id',
-        firstName: '$_id.firstName',
-        lastName: '$_id.lastName',
-        preferences: '$_id.preferences',
-        pending: 1,
-        lastVisitDate: 1,
-        _lastVisitAgency: 1
-      }
-    }
-  ])
-    .then((listWithVisits) => {
+      ]),
+      // lists with empty visists
       Candidate.findAsync({
-        visits: { $size: 0 }
-      },
-      {
-        _id: 1,
-        firstName: 1,
-        lastName: 1,
-        preferences: 1
+          visits: { $size: 0 }
+        },
+        {
+          _id: 1,
+          firstName: 1,
+          lastName: 1,
+          preferences: 1
       })
-        .then((listWithoutVisits) => {
-          res.status(200).json(listWithVisits.concat(listWithoutVisits));
-        })
-        .catch(handleError(res));
+    ])
+    .then(lists => {
+      let combinedList = lists.reduce((a, b) => {
+        return a.concat(b);
+      });
+      res.status(200).json(combinedList);
     })
-    //.then(responseWithResult(res))
     .catch(handleError(res));
 }
 
@@ -141,10 +172,8 @@ export function update(req, res) {
 
   Candidate.findByIdAndUpdateAsync(req.params.id, newCandidate, {overwrite: true})
     .then(handleEntityNotFound(res))
-    .then(()=> {
-      Candidate.findByIdAsync(req.params.id)
-        .then(responseWithResult(res));
-    })
+    .then(res => Candidate.findByIdAsync(req.params.id))
+    .then(responseWithResult(res))
     .catch(handleError(res));
 
 }
@@ -154,5 +183,13 @@ export function destroy(req, res) {
   Candidate.findByIdAsync(req.params.id)
     .then(handleEntityNotFound(res))
     .then(removeEntity(res))
+    .catch(handleError(res));
+}
+
+// Finds a Candidate from the DB
+export function find(req, res) {
+  Candidate.findAsync(req.body.query)
+    .then(handleEntityNotFound(res))
+    .then(responseWithResult(res))
     .catch(handleError(res));
 }
