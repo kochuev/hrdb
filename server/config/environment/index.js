@@ -60,7 +60,7 @@ var all = {
       appPassword: 'mTtsRNiEG9bhMe5cn5EkDfi'
     },
     botId: 'hr_bot',
-    hrConversation: {id: '19:5353023a4c9a4412825f8200978f8834@thread.skype'},
+    hrConversation: {id: '19:8404abf81d7f494e8213d087a2888255@thread.skype'},
     botDisplayName: 'hrbot'
   }
 };
