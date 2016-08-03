@@ -1,7 +1,7 @@
 <navbar></navbar>
 
 <div class="container">
-  <button class="btn btn-default pull-right" ng-click="vm.state.go('candidate.new')">New candidate</button>
+  <button class="btn btn-default pull-right" ng-click="vm.state.go('candidate.new')">New candidate {{(vm.candidates | filter: vm.query).length}}</button>
 
   <table class="table table-hover candidate-list">
     <thead>
@@ -118,7 +118,7 @@
       </tr>
     </tbody>
   </table>
-  <button class="btn btn-default pull-right" ng-click="vm.loadMore(vm.appConfig.listPageSize)" ng-show="vm.limit < vm.candidates.length">
+  <button class="btn btn-default pull-right" ng-click="vm.loadMore(vm.appConfig.listPageSize)" ng-show="vm.limit < (vm.candidates | filter: vm.query).length">
     Load <strong>{{::vm.appConfig.listPageSize}} more</strong> of <strong>{{(vm.candidates | filter: vm.query).length}} total</strong>
   </button>
 </div>

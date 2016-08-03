@@ -3,10 +3,7 @@
 
 angular.module('hrDbApp.constants', [])
 
-.constant('appConfig', {
-  userRoles:['guest','user','admin'],
-  listPageSize: 30
-})
+.constant('appConfig', {userRoles:['guest','user','admin'],listPageSize:30})
 
 ;
 })(angular);
