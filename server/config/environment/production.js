@@ -23,5 +23,9 @@ module.exports = {
           'mongodb://hrdbmongo/hrdb'
   },
 
-  uploadDir: '/home/hrdb/uploads'
+  uploadDir: '~/uploads',
+  
+  skypeBot: {
+    hrConversation: {id: '19:3504f8beb7234337a29ef21d66e2a3c3@thread.skype'}
+  }
 };

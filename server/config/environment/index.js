@@ -32,7 +32,7 @@ var all = {
 
   // Secret for session, you will want to change this and make it an environment variable
   secrets: {
-    session: 'app-secret'
+    session: process.env.SESSION_SECRET ||  'app-secret'
   },
 
   // MongoDB connection options
@@ -46,8 +46,8 @@ var all = {
 
   // Calendar configuration
   calendar: {
-    id: 'n6uv2beh9186bq34n20rmb4gro@group.calendar.google.com',
-    keyFile:  path.normalize(__dirname + '/../../..' + '/.credentials/privateSettings.json'),
+    id: '',
+    keyFile:  process.env.GOOGLE_KEY_FILE,
     interviewDuration: {
       skype: 30,
       office: 120
@@ -56,11 +56,13 @@ var all = {
 
   skypeBot: {
     connectorConfig: {
-      appId: 'bcba5945-be5a-41ab-b64b-674a9f8a42d0',
-      appPassword: 'mTtsRNiEG9bhMe5cn5EkDfi'
+      appId: process.env.MS_APP_ID,
+      appPassword: process.env.MS_APP_PASSWORD
+    },
+    skypeBot: {
+      hrConversation: {id: ''}
     },
     botId: 'hr_bot',
-    hrConversation: {id: '19:3504f8beb7234337a29ef21d66e2a3c3@thread.skype'},
     botDisplayName: 'hrbot'
   }
 };

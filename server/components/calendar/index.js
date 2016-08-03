@@ -133,6 +133,7 @@ class GCalendar extends EventEmitter {
           this.emit('interviewCanceled', {
             type: type,
             candidate: candidate,
+            visit: visit,
             oldDateTime: new Date(Date.parse(oldEvent.start.dateTime))
           });
           return oldEvent;
@@ -172,6 +173,7 @@ class GCalendar extends EventEmitter {
       this.emit('interviewAdded', {
           type: type,
           candidate: candidate,
+          visit: visit,
           newDateTime: event.start.dateTime
       });
 
@@ -202,6 +204,7 @@ class GCalendar extends EventEmitter {
             this.emit('interviewChanged', {
               type: type,
               candidate: candidate,
+              visit: visit,
               newDateTime: event.start.dateTime,
               oldDateTime: new Date(oldStartDate)
             });

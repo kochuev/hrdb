@@ -30,13 +30,13 @@ function formatAboutList(candidates) {
         if (lastVisit.general._agency) {
           message += ' от агенства ' + lastVisit.general._agency.name;
         } else {
-          message += ' без агества';
+          message += ' без агенства';
         }
       } else {
         message += ' никогда у нас не был, но мы откуда-то о нем знаем'
       }
 
-      message += '\n http://hrdb.forma.kharkov.ua/candidate/' + candidate._id;
+      message += '\n ' + process.env.DOMAIN + '/candidate/' + candidate._id;
 
       return message;
     });

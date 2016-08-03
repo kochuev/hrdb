@@ -5,6 +5,7 @@ import builder from 'botbuilder';
 import config from '../../config/environment';
 import calendar from '../../components/calendar';
 import Candidate from '../candidate/candidate.model';
+import Position from '../candidate/position.model';
 import Bluebird from 'bluebird';
 import SkypeHelper from './skype';
 import moment from 'moment';
@@ -165,8 +166,13 @@ function sendMessageToGroupChat(text) {
   });
 }
 
+function getPosition(_id) {
+  return Position.findByIdAsync(_id)
+    .then(position => position.name);
+}
 
-schedule.scheduleJob('30 9 * * *', function(){
+
+schedule.scheduleJob('30 9 * * *', function() {
   Candidate.getPendingDecisions()
     .then(SkypeHelper.formatDecisionsList)
     .then(messages => {
@@ -196,27 +202,37 @@ schedule.scheduleJob('30 9 * * *', function(){
 });
 
 calendar.on('interviewAdded', data => {
-  sendMessageToGroupChat(
-    'У нас НОВОЕ ' + data.type + ' собеседование'
-    + ' с ' + data.candidate.firstName + ' ' + data.candidate.lastName
-    + ', которое состоится в ' + moment(data.newDateTime).format('LLLL'),
-  );
+  getPosition(data.visit.general._position)
+    .then(position => {
+      sendMessageToGroupChat(
+        'У нас НОВОЕ ' + data.type + ' собеседование на позицию ' + position
+        + ' с ' + data.candidate.firstName + ' ' + data.candidate.lastName
+        + ', которое состоится в ' + moment(data.newDateTime).format('LLLL'),
+      );
+    });
 });
 
 calendar.on('interviewChanged', data => {
-  sendMessageToGroupChat(
-    'Внимание! ПЕРЕНОС ' + data.type + ' собеседования'
-    + ' с ' + data.candidate.firstName + ' ' + data.candidate.lastName
-    + ' с ' + moment(data.oldDateTime).format('LLLL')
-    + ' на ' + moment(data.newDateTime).format('LLLL')
-  );
+  getPosition(data.visit.general._position)
+    .then(position => {
+      sendMessageToGroupChat(
+        'Внимание! ПЕРЕНОС ' + data.type + ' собеседования на позицию ' + position
+        + ' с ' + data.candidate.firstName + ' ' + data.candidate.lastName
+        + ' с ' + moment(data.oldDateTime).format('LLLL')
+        + ' на ' + moment(data.newDateTime).format('LLLL')
+      );
+    });
 });
 
 calendar.on('interviewCanceled', data => {
-  sendMessageToGroupChat(
-    'Отменяется ' + data.type + ' собеседование с ' + data.candidate.firstName + ' ' + data.candidate.lastName
-    + ', которое должно было состояться в ' + moment(data.oldDateTime).format('LLLL')
-  );
+  getPosition(data.visit.general._position)
+    .then(position => {
+      sendMessageToGroupChat(
+        'Отменяется ' + data.type + ' собеседование на позицию ' + position
+        + ' с ' + data.candidate.firstName + ' ' + data.candidate.lastName
+        + ', которое должно было состояться в ' + moment(data.oldDateTime).format('LLLL')
+      );
+    });
 });
 
 module.exports = router;
