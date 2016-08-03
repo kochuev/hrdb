@@ -59,9 +59,7 @@ var all = {
       appId: process.env.MS_APP_ID,
       appPassword: process.env.MS_APP_PASSWORD
     },
-    skypeBot: {
-      hrConversation: {id: ''}
-    },
+    hrConversation: {id: ''},
     botId: 'hr_bot',
     botDisplayName: 'hrbot'
   }

@@ -196,8 +196,20 @@ class GCalendar extends EventEmitter {
         calendarId: config.calendar.id,
         eventId: visit[type].eventId
       })
+        .catch(e => {
+          if (e.code == 404) {
+            return this.eventsApi.insertAsync({
+              auth: this.oauth2Client,
+              calendarId: config.calendar.id,
+              resource: event,
+              sendNotifications: true
+            })
+          } else {
+            throw e;
+          }
+        })
         .then(oldEvent => {
-          let oldStartDate = Date.parse(oldEvent.start.dateTime);
+          let oldStartDate = oldEvent.id == visit[type].eventId ? Date.parse(oldEvent.start.dateTime) : undefined;
           let newStartDate = event.start.dateTime.getTime();
 
           if (oldStartDate != newStartDate) {
@@ -212,13 +224,18 @@ class GCalendar extends EventEmitter {
           return oldEvent;
         })
         .then(oldEvent => {
-          return this.eventsApi.updateAsync({
-            auth: this.oauth2Client,
-            calendarId: config.calendar.id,
-            eventId: oldEvent.id,
-            resource: event,
-            sendNotifications: true
-          });
+          if (oldEvent.id == visit[type].eventId) {
+            return this.eventsApi.updateAsync({
+              auth: this.oauth2Client,
+              calendarId: config.calendar.id,
+              eventId: oldEvent.id,
+              resource: event,
+              sendNotifications: true
+            });
+          } else {
+            visit[type].eventId = oldEvent.id;
+            return oldEvent;
+          }
         });
         //.catch(this.handleApiError);
     }
