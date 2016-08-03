@@ -23,8 +23,8 @@ module.exports = {
           'mongodb://hrdbmongo/hrdb'
   },
 
-  uploadDir: '~/uploads',
-  
+  uploadDir: process.env.UPLOAD_DIR,
+
   skypeBot: {
     hrConversation: {id: '19:3504f8beb7234337a29ef21d66e2a3c3@thread.skype'}
   }
