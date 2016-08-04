@@ -4,76 +4,75 @@
 
 class CandidateListController {
 
-  constructor($http, $state, $scope, $cookies, Modal, candidatesObj, agencies, positions, appConfig) {
+  constructor($http, $state, $scope, $cookies, $filter, Modal, candidatesObj, agencies, positions, appConfig) {
     this.$http = $http;
     this.$cookies = $cookies;
+    this.$filter = $filter;
+    this.$scope = $scope;
     this.Modal = Modal;
 
     this.state = $state;
 
     this.candidates = candidatesObj.data;
+    this.filteredCandidates = this.candidates;
+    this.filteredCandidatesLength = this.filteredCandidates.length;
     this.agencies = agencies;
     this.positions = positions;
     this.appConfig = appConfig;
 
-    // Limit
-    this.limit = this.$cookies.get('list.limit');
-    if (!this.limit)
-        this.limit = this.appConfig.listPageSize;
+    this.initFilters();
+  }
 
-    $scope.$watch(() => this.limit, () => {
-      this.$cookies.put('list.limit', this.limit);
-    });
+  initFilters() {
+    var defaultFilter = this.getDefaultFilter();
 
-    // Query filter
-    this.query = this.$cookies.getObject('list.query');
-    if (!this.query)
-        this.query = {};
+    // restoring filter from cookie
+    this.filter = this.$cookies.getObject('list.filter');
 
-    $scope.$watch(() => this.query, () => {
-      this.$cookies.putObject('list.query', this.query);
-    }, true);
-
-    //Sorting
-    this.sort = this.$cookies.getObject('list.sort');
-    if (!this.sort) {
-      this.sort = {
-        field: this.sortByLastVisitDate,
-        reverse: true
-      };
+    // Setting defaults
+    if (this.filter) {
+      this.filter.limit = this.filter.limit ? this.filter.limit : defaultFilter.limit;
+      this.filter.query = this.filter.query ? this.filter.query : defaultFilter.query;
+      this.filter.sort = this.filter.sort ? this.filter.sort : defaultFilter.sort;
+    } else {
+      this.filter = defaultFilter;
     }
 
-    $scope.$watch(() => this.sort, () => {
-      this.$cookies.putObject('list.sort', this.sort);
-    }, true);
+    // Applying filters
+    this.$scope.$watch(() => this.filter, () => {
+      this.$cookies.putObject('list.filter', this.filter);
 
+      this.filteredCandidates = this.$filter('filter')(this.candidates, this.filter.query);
+      this.filteredCandidates = this.$filter('orderBy')(this.filteredCandidates, this.filter.sort.field, this.filter.sort.reverse);
+      this.filteredCandidatesLength = this.filteredCandidates.length;
+      this.filteredCandidates = this.$filter('limitTo')(this.filteredCandidates, this.filter.limit);
+    }, true);
   }
 
   removeFilters() {
-    this.query = {};
-
-    this.limit = this.appConfig.listPageSize;
-
-    this.sort = {
-      field: this.sortByLastVisitDate,
-      reverse: true
-    };
+    this.filter = this.getDefaultFilter();
   }
 
-  sortByLastVisitDate(candidate) {
-    if  (candidate.lastVisitDate)
-      return candidate.lastVisitDate.getTime();
-    else
-      return 0;
+  getDefaultFilter() {
+    var defaultFilter = {};
+
+    defaultFilter.query = {};
+    defaultFilter.limit = this.appConfig.listPageSize;
+    defaultFilter.sort = {
+      field: 'lastVisitDate.getTime()',
+      reverse: true
+    };
+
+    return defaultFilter;
   }
 
   loadMore(amount) {
-    this.limit += amount;
+    this.filter.limit += amount;
   }
 
   sortParam(field) {
-    this.sort.reverse = (this.sort.field === field) ? !this.sort.reverse : false;
-    this.sort.field = field;
+    this.filter.sort.reverse = (this.filter.sort.field === field) ? !this.filter.sort.reverse : false;
+    this.filter.sort.field = field;
   }
 
   removeCandidate(candidate) {

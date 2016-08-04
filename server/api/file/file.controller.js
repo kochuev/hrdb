@@ -22,7 +22,8 @@ var translit = require('translit')(require('translit-russian'));
 function handleError(res, statusCode) {
   statusCode = statusCode || 500;
   return function(err) {
-    res.status(statusCode).send(err);
+    if (err)
+      res.status(statusCode).send(err);
   };
 }
 

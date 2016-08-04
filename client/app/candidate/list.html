@@ -1,7 +1,7 @@
 <navbar></navbar>
 
 <div class="container">
-  <button class="btn btn-default pull-right" ng-click="vm.state.go('candidate.new')">New candidate {{(vm.candidates | filter: vm.query).length}}</button>
+  <button class="btn btn-default pull-right" ng-click="vm.state.go('candidate.new')">New candidate</button>
 
   <table class="table table-hover candidate-list">
     <thead>
@@ -9,19 +9,19 @@
         <th>
           First Name
           <a href ng-click="vm.sortParam('firstName')">
-            <i class="fa" ng-class="vm.sort.field == 'firstName' ? (vm.sort.reverse ? 'fa-sort-alpha-desc' : 'fa-sort-alpha-asc') : 'fa-sort'"></i>
+            <i class="fa" ng-class="vm.filter.sort.field == 'firstName' ? (vm.filter.sort.reverse ? 'fa-sort-alpha-desc' : 'fa-sort-alpha-asc') : 'fa-sort'"></i>
           </a>
         </th>
         <th>
           Last Name
           <a href ng-click="vm.sortParam('lastName')">
-            <i class="fa" ng-class="vm.sort.field == 'lastName' ? (vm.sort.reverse ? 'fa-sort-alpha-desc' : 'fa-sort-alpha-asc') : 'fa-sort'"></i>
+            <i class="fa" ng-class="vm.filter.sort.field == 'lastName' ? (vm.filter.sort.reverse ? 'fa-sort-alpha-desc' : 'fa-sort-alpha-asc') : 'fa-sort'"></i>
           </a>
         </th>
         <th>
           Last visit
-          <a href ng-click="vm.sortParam(vm.sortByLastVisitDate)">
-            <i class="fa" ng-class="vm.sort.field == vm.sortByLastVisitDate ? (vm.sort.reverse ? 'fa-sort-alpha-desc' : 'fa-sort-alpha-asc') : 'fa-sort'"></i>
+          <a href ng-click="vm.sortParam('lastVisitDate.getTime()')">
+            <i class="fa" ng-class="vm.filter.sort.field == 'lastVisitDate.getTime()' ? (vm.filter.sort.reverse ? 'fa-sort-alpha-desc' : 'fa-sort-alpha-asc') : 'fa-sort'"></i>
           </a>
         </th>
         <th>
@@ -32,29 +32,29 @@
         <th></th>
       </tr>
       <tr>
-        <th><input class="form-control" type="text" ng-model="vm.query.firstName"></th>
-        <th><input class="form-control" type="text" ng-model="vm.query.lastName"></th>
+        <th><input class="form-control" type="text" ng-model="vm.filter.query.firstName"></th>
+        <th><input class="form-control" type="text" ng-model="vm.filter.query.lastName"></th>
         <th></th>
         <th>
           <select class="form-control"
                   ng-options="position._id as position.name for position in vm.positions"
-                  ng-model="vm.query._lastVisitPosition"
+                  ng-model="vm.filter.query._lastVisitPosition"
                   required>
             <option value=""> --- </option>
           </select>
         </th>
         <th>
           <div class="btn-group">
-            <label class="btn btn-default" ng-model="vm.query.preferences" uib-btn-radio="'blacklist'">BL</label>
-            <label class="btn btn-default" ng-model="vm.query.preferences" uib-btn-radio="undefined">-</label>
-            <label class="btn btn-default" ng-model="vm.query.preferences" uib-btn-radio="'wishlist'">WL</label>
+            <label class="btn btn-default" ng-model="vm.filter.query.preferences" uib-btn-radio="'blacklist'">BL</label>
+            <label class="btn btn-default" ng-model="vm.filter.query.preferences" uib-btn-radio="undefined">-</label>
+            <label class="btn btn-default" ng-model="vm.filter.query.preferences" uib-btn-radio="'wishlist'">WL</label>
           </div>
         </th>
         <th>
           <div class="btn-group">
-            <label class="btn btn-default" ng-model="vm.query.pending" uib-btn-radio="'1'">Y</label>
-            <label class="btn btn-default" ng-model="vm.query.pending" uib-btn-radio="undefined">-</label>
-            <label class="btn btn-default" ng-model="vm.query.pending" uib-btn-radio="'!1'">N</label>
+            <label class="btn btn-default" ng-model="vm.filter.query.pending" uib-btn-radio="'1'">Y</label>
+            <label class="btn btn-default" ng-model="vm.filter.query.pending" uib-btn-radio="undefined">-</label>
+            <label class="btn btn-default" ng-model="vm.filter.query.pending" uib-btn-radio="'!1'">N</label>
           </div>
         </th>
         <th class="remove-filters">
@@ -63,13 +63,13 @@
       </tr>
     </thead>
     <tbody>
-      <tr ng-show="!filteredCandidates.length">
+      <tr ng-show="!vm.filteredCandidates.length">
         <td colspan="5">
           No candidates found
         </td>
       </tr>
       <tr
-        ng-repeat="c in vm.candidates | orderBy : vm.sort.field : vm.sort.reverse | filter: vm.query  | limitTo: vm.limit as filteredCandidates"
+        ng-repeat="c in vm.filteredCandidates"
         ng-click="vm.state.go('candidate.details', { 'id': c._id})" >
         <td>{{c.firstName}}</td>
         <td>{{c.lastName}}</td>
@@ -118,8 +118,8 @@
       </tr>
     </tbody>
   </table>
-  <button class="btn btn-default pull-right" ng-click="vm.loadMore(vm.appConfig.listPageSize)" ng-show="vm.limit < (vm.candidates | filter: vm.query).length">
-    Load <strong>{{::vm.appConfig.listPageSize}} more</strong> of <strong>{{(vm.candidates | filter: vm.query).length}} total</strong>
+  <button class="btn btn-default pull-right" ng-click="vm.loadMore(vm.appConfig.listPageSize)" ng-show="vm.filter.limit < vm.filteredCandidatesLength">
+    Load <strong>{{::vm.appConfig.listPageSize}} more</strong> of <strong>{{vm.filteredCandidatesLength}} total</strong>
   </button>
 </div>
 
