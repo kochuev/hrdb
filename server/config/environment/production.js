@@ -25,6 +25,11 @@ module.exports = {
 
   uploadDir: process.env.UPLOAD_DIR,
 
+  calendar: {
+    id: process.env.GOOGLE_CALENDAR_ID,
+    keyFile: process.env.GOOGLE_KEY_FILE
+  },
+
   skypeBot: {
     hrConversation: {id: '19:3504f8beb7234337a29ef21d66e2a3c3@thread.skype'}
   }

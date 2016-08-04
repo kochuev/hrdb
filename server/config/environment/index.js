@@ -47,7 +47,7 @@ var all = {
   // Calendar configuration
   calendar: {
     id: '',
-    keyFile:  process.env.GOOGLE_KEY_FILE,
+    keyFile:  '',
     interviewDuration: {
       skype: 30,
       office: 120
