@@ -24,7 +24,7 @@ function formatAboutList(candidates) {
       let message = candidate.firstName + ' ' + candidate.lastName;
       let lastVisit = candidate.visits.pop();
       if (lastVisit) {
-        message += ' был у нас ' + moment(lastVisit.general.date).format('L');
+        message += ' был(а) у нас ' + moment(lastVisit.general.date).format('L');
         message += ' на вакансию ' + lastVisit.general._position.name;
 
         if (lastVisit.general._agency) {
@@ -33,7 +33,7 @@ function formatAboutList(candidates) {
           message += ' без агенства';
         }
       } else {
-        message += ' никогда у нас не был, но мы откуда-то о нем знаем'
+        message += ' никогда у нас не был(а), но мы откуда-то знаем об этом кандидате'
       }
 
       message += '\n ' + process.env.DOMAIN + '/candidate/' + candidate._id;
@@ -72,11 +72,11 @@ function formatDecisionsList(candidates) {
     .map(candidate => {
       let message = "- " + candidate.firstName + ' ' + candidate.lastName + ' на позицию ' + candidate._position.name;
       if (candidate.pending.proposal) {
-        message += ' должен что-то ответить по нашему офферу, сделанному в ' + moment(candidate.pending.proposal).format('LLLL');
+        message += ' должен что-то ответить по нашему офферу, сделанному ' + moment(candidate.pending.proposal).calendar().toLowerCase();
       } else if (candidate.pending.office) {
-        message += ' ждет офера или отказа по результатам собеседования в офисе, проведенного в ' + moment(candidate.pending.office).format('LLLL');
+        message += ' ждет офера или отказа по результатам собеседования в офисе, проведенного ' + moment(candidate.pending.office).calendar().toLowerCase();
       } else if (candidate.pending.skype) {
-        message += ' ждет приглашения в офис или отказа по результатам собеседования в скайпе, проведенного в ' + moment(candidate.pending.skype).format('LLLL');
+        message += ' ждет приглашения в офис или отказа по результатам собеседования в скайпе, проведенного ' + moment(candidate.pending.skype).calendar().toLowerCase();
       } else {
         message += ' ждет решения по его резюме';
       }

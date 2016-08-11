@@ -4,6 +4,7 @@ import config from '../../config/environment';
 import Bluebird from 'bluebird';
 import Position from '../../api/candidate/position.model';
 import EventEmitter from 'events';
+import moment from 'moment';
 
 class GCalendar extends EventEmitter {
 
@@ -130,12 +131,15 @@ class GCalendar extends EventEmitter {
         eventId: visit[type].eventId
       })
         .then(oldEvent =>{
-          this.emit('interviewCanceled', {
-            type: type,
-            candidate: candidate,
-            visit: visit,
-            oldDateTime: new Date(Date.parse(oldEvent.start.dateTime))
-          });
+          // Do a notification if interview is not in the past
+          if (!moment(oldEvent.start.dateTime).isBefore()) {
+            this.emit('interviewCanceled', {
+              type: type,
+              candidate: candidate,
+              visit: visit,
+              oldDateTime: moment(oldEvent.start.dateTime).toDate()
+            });
+          }
           return oldEvent;
         })
         .then(oldEvent => {
@@ -146,49 +150,49 @@ class GCalendar extends EventEmitter {
             sendNotifications: true
           })
         })
-        //.catch(this.handleApiError)
+        .catch(e => {
+          return null;
+        })
         .finally(() => {
           visit[type].eventId = null;
         })
     }
-    var milliseconds = Date.parse(visit[type].dateTime);
-    var startDate =  new Date(milliseconds);
-    var endDate = new Date(startDate.getTime());
-    endDate.setMinutes(endDate.getMinutes() + config.calendar.interviewDuration[type]);
 
-    if (startDate < Date.now())
-      return Bluebird.resolve('null');
+    /** @type {moment} */
+    var startDate = moment(visit[type].dateTime);
+    /** @type {moment} */
+    var endDate = moment(startDate).add(config.calendar.interviewDuration[type], 'minutes');
 
-    event.start = { dateTime: startDate };
-    event.end = { dateTime: endDate };
-
+    // defining event object for google
+    event.start = { dateTime: startDate.toDate() };
+    event.end = { dateTime: endDate.toDate() };
     event.guestsCanInviteOthers = false;
     event.guestsCanSeeOtherGuests = false;
-
     if (candidate.email)
       event.attendees = [ { email: candidate.email } ];
 
     // no event id, so create new
     if (!visit[type].eventId) {
-      this.emit('interviewAdded', {
-          type: type,
-          candidate: candidate,
-          visit: visit,
-          newDateTime: event.start.dateTime
-      });
-
-      return this.eventsApi.insertAsync({
-        auth: this.oauth2Client,
-        calendarId: config.calendar.id,
-        resource: event,
-        sendNotifications: true
-      })
-        .then(event => {
-          visit[type].eventId = event.id;
-          return event;
-        });
-        //.catch(this.handleApiError);
-
+      if (startDate.isBefore()) {
+        return Bluebird.resolve('null');
+      } else {
+        return this.eventsApi.insertAsync({
+            auth: this.oauth2Client,
+            calendarId: config.calendar.id,
+            resource: event,
+            sendNotifications: true
+          })
+          .then(event => {
+            this.emit('interviewAdded', {
+              type: type,
+              candidate: candidate,
+              visit: visit,
+              newDateTime: event.start.dateTime
+            });
+            visit[type].eventId = event.id;
+            return event;
+          });
+      }
     // update existing event
     } else {
       return this.eventsApi.getAsync({
@@ -196,48 +200,29 @@ class GCalendar extends EventEmitter {
         calendarId: config.calendar.id,
         eventId: visit[type].eventId
       })
-        .catch(e => {
-          if (e.code == 404) {
-            return this.eventsApi.insertAsync({
-              auth: this.oauth2Client,
-              calendarId: config.calendar.id,
-              resource: event,
-              sendNotifications: true
-            })
-          } else {
-            throw e;
-          }
-        })
         .then(oldEvent => {
-          let oldStartDate = oldEvent.id == visit[type].eventId ? Date.parse(oldEvent.start.dateTime) : undefined;
-          let newStartDate = event.start.dateTime.getTime();
+          let oldEventTime = moment(oldEvent.start.dateTime);
 
-          if (oldStartDate != newStartDate) {
+          if (!oldEventTime.isSame(startDate) && !startDate.isBefore()) {
             this.emit('interviewChanged', {
               type: type,
               candidate: candidate,
               visit: visit,
-              newDateTime: event.start.dateTime,
-              oldDateTime: new Date(oldStartDate)
+              newDateTime: startDate.toDate(),
+              oldDateTime: oldEventTime.toDate()
             });
           }
           return oldEvent;
         })
         .then(oldEvent => {
-          if (oldEvent.id == visit[type].eventId) {
-            return this.eventsApi.updateAsync({
-              auth: this.oauth2Client,
-              calendarId: config.calendar.id,
-              eventId: oldEvent.id,
-              resource: event,
-              sendNotifications: true
-            });
-          } else {
-            visit[type].eventId = oldEvent.id;
-            return oldEvent;
-          }
-        });
-        //.catch(this.handleApiError);
+          return this.eventsApi.updateAsync({
+            auth: this.oauth2Client,
+            calendarId: config.calendar.id,
+            eventId: oldEvent.id,
+            resource: event,
+            sendNotifications: true
+          });
+        })
     }
   }
 }

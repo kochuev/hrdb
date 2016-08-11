@@ -14,7 +14,8 @@ describe('Login View', function() {
   var testUser = {
     name: 'Test User',
     email: 'test@example.com',
-    password: 'test'
+    password: 'test',
+    active: true
   };
 
   beforeEach(function(done) {

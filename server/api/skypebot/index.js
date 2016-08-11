@@ -172,7 +172,7 @@ function getPosition(_id) {
 }
 
 
-schedule.scheduleJob('30 9 * * *', function() {
+schedule.scheduleJob('30 9 * * 1-5', function() {
   Candidate.getPendingDecisions()
     .then(SkypeHelper.formatDecisionsList)
     .then(messages => {
@@ -181,7 +181,7 @@ schedule.scheduleJob('30 9 * * *', function() {
       return messages;
     })
     .each(message => {
-      sendMessageToGroupChat(message);
+      return sendMessageToGroupChat(message);
     })
     .then(()=> {
       return Candidate.getTodayInterviews();
@@ -193,7 +193,7 @@ schedule.scheduleJob('30 9 * * *', function() {
       return messages;
     })
     .each(message => {
-      sendMessageToGroupChat(message);
+      return sendMessageToGroupChat(message);
     })
     .catch(err => {
       console.error('There was an error composing pending decision visits reply message: ' + err);
@@ -207,7 +207,7 @@ calendar.on('interviewAdded', data => {
       sendMessageToGroupChat(
         'У нас НОВОЕ ' + data.type + ' собеседование на позицию ' + position
         + ' с ' + data.candidate.firstName + ' ' + data.candidate.lastName
-        + ', которое состоится в ' + moment(data.newDateTime).format('LLLL'),
+        + ', которое состоится ' + moment(data.newDateTime).calendar().toLowerCase(),
       );
     });
 });
@@ -218,8 +218,8 @@ calendar.on('interviewChanged', data => {
       sendMessageToGroupChat(
         'Внимание! ПЕРЕНОС ' + data.type + ' собеседования на позицию ' + position
         + ' с ' + data.candidate.firstName + ' ' + data.candidate.lastName
-        + ' с ' + moment(data.oldDateTime).format('LLLL')
-        + ' на ' + moment(data.newDateTime).format('LLLL')
+        + '. Собеседование было состояться ' + moment(data.oldDateTime).calendar().toLowerCase()
+        + ', но состоиться ' + moment(data.newDateTime).calendar().toLowerCase()
       );
     });
 });
@@ -230,7 +230,7 @@ calendar.on('interviewCanceled', data => {
       sendMessageToGroupChat(
         'Отменяется ' + data.type + ' собеседование на позицию ' + position
         + ' с ' + data.candidate.firstName + ' ' + data.candidate.lastName
-        + ', которое должно было состояться в ' + moment(data.oldDateTime).format('LLLL')
+        + ', которое должно было состояться ' + moment(data.oldDateTime).calendar().toLowerCase()
       );
     });
 });

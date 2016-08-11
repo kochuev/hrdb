@@ -12,7 +12,8 @@ angular.module('hrDbApp', [
     'ui.bootstrap',
     'validation.match',
     'ngFileUpload',
-    'angularSpinner'
+    'angularSpinner',
+    'angularMoment'
   ])
   .config(function ($urlRouterProvider, $locationProvider) {
     $urlRouterProvider
@@ -51,6 +52,18 @@ angular.module('hrDbApp', [
     $httpProvider.defaults.transformResponse.push(function (responseData) {
       convertDateStringsToDates(responseData);
       return responseData;
+    });
+  })
+  .run(amMoment => {
+    amMoment.changeLocale('en', {
+      longDateFormat : {
+        LTS  : 'HH:mm:ss',
+        LT   : 'HH:mm',
+        L    : 'MM.DD.YYYY',
+        LL   : 'MMMM D, YYYY',
+        LLL  : 'MMMM D, YYYY HH:mm',
+        LLLL : 'dddd, MMMM D, YYYY HH:mm'
+      }
     });
   });
 

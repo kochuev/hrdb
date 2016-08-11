@@ -42,13 +42,31 @@ describe('Signup View', function() {
       UserModel.removeAsync().then(done);
     });
 
-    it('should signup a new user, log them in, and redirecting to "/"', function() {
+    it('should signup a new user in deactivated state and show appropriate message', function() {
       page.signup(testUser);
 
-      var navbar = require('../../components/navbar/navbar.po');
+      expect(element(by.css('.alert.alert-success')).isDisplayed()).toBeTruthy();
 
-      expect(browser.getCurrentUrl()).toBe(config.baseUrl + '/');
-      expect(navbar.navbarAccountGreeting.getText()).toBe('Hello ' + testUser.name);
+      var checkUserCreated = function () {
+        var deferred = protractor.promise.defer();
+
+        // Verify that an account has been created
+        UserModel.findAsync({email: testUser.email})
+          .then(foundUsers => {
+            expect(foundUsers.length).toBe(1);
+            return foundUsers
+          })
+          .catch(err => {
+            fail(err);
+          })
+          .finally(() => {
+            return deferred.fulfill();
+          })
+
+        return deferred.promise;
+      };
+
+      browser.controlFlow().execute(checkUserCreated);
     });
 
     it('should indicate signup failures', function() {

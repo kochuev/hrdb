@@ -74,7 +74,7 @@
         <td>{{c.firstName}}</td>
         <td>{{c.lastName}}</td>
         <td>
-          {{c.lastVisitDate | date: "dd.MM.yy"}}
+          {{c.lastVisitDate  | amDateFormat : 'L'}}
           <span ng-if="c.lastVisitDate === undefined">never</span>
           <span ng-if="c._lastVisitAgency" class="byagency">by {{vm.agencies[c._lastVisitAgency].name}}</span>
         </td>
@@ -85,31 +85,8 @@
           <i class="fa fa-exclamation-triangle fa-2x" ng-if="c.preferences == 'blacklist'"></i>
           <i class="fa fa-heart fa-2x" ng-if="c.preferences == 'wishlist'"></i>
         </td>
-        <td ng-switch on="c.interviewStatus[0]">
-          <i ng-switch-when="cv"
-            class="fa fa-check-square fa-2x"
-            ng-show="c.pending"
-            uib-popover="Review CV and make a decision!"
-            popover-trigger="mouseenter"
-          ></i>
-          <i ng-switch-when="skype"
-             class="fa fa-check-square fa-2x"
-             ng-show="c.pending"
-             uib-popover="Skype interview on {{c.interviewStatus[1] | date:'MMM d (EEE) hh:mm'}}"
-             popover-trigger="mouseenter"
-          ></i>
-          <i ng-switch-when="office"
-             class="fa fa-check-square fa-2x"
-             ng-show="c.pending"
-             uib-popover="Office interview on {{c.interviewStatus[1] | date:'MMM d (EEE) hh:mm'}}"
-             popover-trigger="mouseenter"
-          ></i>
-          <i ng-switch-when="proposal"
-             class="fa fa-check-square fa-2x"
-             ng-show="c.pending"
-             uib-popover="Waiting for answer on proposal."
-             popover-trigger="mouseenter"
-          ></i>
+        <td>
+          <interview-status stage="c.interviewStatus[0]" date-time="c.interviewStatus[1]" ng-show="c.pending"></interview-status>
         </td>
         <td>
           <a href="#" ng-click="vm.state.go('candidate.details', { 'id': c._id}); $event.stopPropagation();" class="edit"><span class="fa fa-pencil fa-2x"></span></a>

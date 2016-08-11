@@ -116,7 +116,7 @@
         <i class="glyphicon glyphicon-ok" ng-if="v.closed == 'hired'"></i>
         <i class="fa fa-user-times" ng-if="v.closed == 'rejected'"></i>
         <i class="fa fa-hourglass-half" ng-if="!v.closed"></i>
-        {{v.general.date | date: "dd.MM.yy"}}
+        {{v.general.date | amDateFormat : 'L'}}
         <i class="fa fa-exclamation-triangle" style="color: red" ng-if="!v.isValid()"></i>
         <span uib-dropdown on-toggle="toggled(open)">
           <a href id="simple-dropdown" class="caret" uib-dropdown-toggle></a>

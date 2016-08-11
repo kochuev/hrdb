@@ -1,32 +1,35 @@
-hrdb:
-  build: .
-  environment:
-    - TZ=Europe/Kiev
-  command: ["grunt", "serve"]
-  ports:
-   - "9000:9000"
-   - "35729:35729"
-   - "5858:5858"
-  volumes:
-   - .:/vol/app/
-  links:
-   - hrdbmongo
-hrdbmongo:
-  ports:
-    - "27017:27017"
-  volumes:
-   - /data/db/:/data/db/
-  image: mongo
-  container_name: hrdbmongo
-  hostname:       hrdbmongo
-  domainname:     hrdbmongo
-ngrok:
-  ports:
-   - "4040:4040"
-  links:
-   - hrdb:http
-  image: wernight/ngrok
-  container_name: ngrok
-  hostname:       ngrok
-  domainname:     ngrok
-  command: ngrok http -log stdout http:9000
+version: '2'
+
+services:
+  hrdb:
+    build: .
+    environment:
+      - TZ=Europe/Kiev
+    command: ["grunt", "serve"]
+    ports:
+     - "9000:9000"
+     - "35729:35729"
+     - "5858:5858"
+    volumes:
+     - .:/vol/app/
+    links:
+     - hrdbmongo
+  hrdbmongo:
+    ports:
+      - "27017:27017"
+    volumes:
+     - /data/db/:/data/db/
+    image: mongo
+    container_name: hrdbmongo
+    hostname:       hrdbmongo
+    domainname:     hrdbmongo
+  ngrok:
+    ports:
+     - "4040:4040"
+    links:
+     - hrdb:http
+    image: wernight/ngrok
+    container_name: ngrok
+    hostname:       ngrok
+    domainname:     ngrok
+    command: ngrok http -log stdout http:9000

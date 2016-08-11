@@ -14,6 +14,12 @@ class CandidateListController {
     this.state = $state;
 
     this.candidates = candidatesObj.data;
+
+    for(let candidate of this.candidates) {
+      candidate.lastNameMFN = metaphone(translit(candidate.lastName));
+      candidate.firstNameMFN = metaphone(translit(candidate.firstName));
+    }
+
     this.filteredCandidates = this.candidates;
     this.filteredCandidatesLength = this.filteredCandidates.length;
     this.agencies = agencies;
@@ -38,15 +44,28 @@ class CandidateListController {
       this.filter = defaultFilter;
     }
 
-    // Applying filters
-    this.$scope.$watch(() => this.filter, () => {
+    var filterCandidates = () => {
       this.$cookies.putObject('list.filter', this.filter);
 
-      this.filteredCandidates = this.$filter('filter')(this.candidates, this.filter.query);
+      var query = angular.copy(this.filter.query);
+      if (query.firstName) {
+        query.firstNameMFN = metaphone(translit(query.firstName));
+        query.firstName = undefined;
+      }
+      if (query.lastName) {
+        query.lastNameMFN = metaphone(translit(query.lastName));
+        query.lastName = undefined;
+      }
+
+      this.filteredCandidates = this.$filter('filter')(this.candidates, query);
       this.filteredCandidates = this.$filter('orderBy')(this.filteredCandidates, this.filter.sort.field, this.filter.sort.reverse);
       this.filteredCandidatesLength = this.filteredCandidates.length;
       this.filteredCandidates = this.$filter('limitTo')(this.filteredCandidates, this.filter.limit);
-    }, true);
+    }
+
+    // Applying filters
+    this.$scope.$watch(() => this.filter, filterCandidates , true);
+    this.$scope.$watch(() => this.candidates.length, filterCandidates , true);
   }
 
   removeFilters() {

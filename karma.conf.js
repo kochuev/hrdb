@@ -25,6 +25,10 @@ module.exports = function(config) {
       'client/bower_components/ng-file-upload/ng-file-upload.js',
       'client/bower_components/spin.js/spin.js',
       'client/bower_components/angular-spinner/angular-spinner.js',
+      'client/bower_components/moment/moment.js',
+      'client/bower_components/angular-moment/angular-moment.js',
+      'client/bower_components/translit/dist/translit.js',
+      'client/bower_components/metaphone/metaphone.js',
       'client/bower_components/angular-mocks/angular-mocks.js',
       // endbower
       'node_modules/socket.io-client/socket.io.js',

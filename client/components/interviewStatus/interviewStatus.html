@@ -1,0 +1,5 @@
+<i
+  class="fa fa-2x" ng-class="isPastInterview() ? 'fa-question-circle interview-past' : 'fa-check-circle interview-future'"
+  uib-popover-html="texts[stage] + ' <div class=\'label ' + (isPastInterview() ? 'label-danger' : 'label-success') + '\'>' + (dateTime | amCalendar) + '</div>'"
+  popover-trigger="mouseenter">
+</i>

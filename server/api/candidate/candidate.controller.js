@@ -74,7 +74,7 @@ export function index(req, res) {
             interviewStatus: {
               $cond: {
                 if: { $eq: ['$visits.proposal.done', true] },
-                then: ['proposal'],
+                then: ['proposal', '$visits.proposal.date'],
                 else: {
                   $cond: {
                     if: { $eq: ['$visits.office.planned', true] },
@@ -83,7 +83,7 @@ export function index(req, res) {
                       $cond: {
                         if: { $eq: ['$visits.skype.planned', true] },
                         then: ['skype', '$visits.skype.dateTime'],
-                        else: ['cv']
+                        else: ['cv', '$visits.general.date']
                       }
                     }
                   }
