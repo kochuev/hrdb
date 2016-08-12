@@ -17,7 +17,7 @@ import fs from 'fs-extra';
 import path from 'path';
 import shortid from 'shortid';
 
-var translit = require('translit')(require('translit-russian'));
+var translit = require('translit')(config.translitMap);
 
 function handleError(res, statusCode) {
   statusCode = statusCode || 500;

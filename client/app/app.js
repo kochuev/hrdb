@@ -4,6 +4,7 @@ angular.module('hrDbApp', [
     'hrDbApp.auth',
     'hrDbApp.admin',
     'hrDbApp.constants',
+    'hrDbApp.metaphone',
     'ngCookies',
     'ngResource',
     'ngSanitize',

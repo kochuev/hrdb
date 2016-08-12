@@ -1,6 +1,7 @@
 'use strict';
 
 var mongoose = require('bluebird').promisifyAll(require('mongoose'));
+import metaphone from '../../components/metaphone';
 import fs from 'fs';
 import calendar from '../../components/calendar';
 import Bluebird from 'bluebird';
@@ -14,6 +15,8 @@ var CandidateSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  firstNameMfn: String,
+  lastNameMfn: String,
   birthYear: Number,
   email: String,
   skypeId: String,
@@ -84,6 +87,23 @@ var CandidateSchema = new mongoose.Schema({
 
 CandidateSchema
   .pre('save', function(next) {
+    this.firstNameMfn = metaphone(this.firstName);
+    this.lastNameMfn = metaphone(this.lastName);
+
+    next();
+  });
+
+CandidateSchema
+  .pre('findOneAndUpdate', function(next) {
+    var newCandidate = this.getUpdate();
+    newCandidate.firstNameMfn = metaphone(newCandidate.firstName);
+    newCandidate.lastNameMfn = metaphone(newCandidate.lastName);
+
+    next();
+  });
+
+CandidateSchema
+  .pre('save', function(next) {
     calendar.authorize()
       .then(() => {
         return calendar.handleSkypeInterviews(this.toJSON());
@@ -125,7 +145,7 @@ CandidateSchema
         return calendar.handleOfficeInterviews(newCandidate);
       })
       .then(() => {
-        this.findOneAndUpdate({}, newCandidate);
+        //this.findOneAndUpdate({}, newCandidate);
         next();
       })
       .catch(err => {

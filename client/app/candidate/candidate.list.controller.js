@@ -4,22 +4,16 @@
 
 class CandidateListController {
 
-  constructor($http, $state, $scope, $cookies, $filter, Modal, candidatesObj, agencies, positions, appConfig) {
+  constructor($http, $state, $scope, $cookies, $filter, Modal, candidatesObj, agencies, positions, appConfig, Metaphone) {
     this.$http = $http;
     this.$cookies = $cookies;
     this.$filter = $filter;
     this.$scope = $scope;
     this.Modal = Modal;
-
+    this.Metaphone = Metaphone;
     this.state = $state;
 
     this.candidates = candidatesObj.data;
-
-    for(let candidate of this.candidates) {
-      candidate.lastNameMFN = metaphone(translit(candidate.lastName));
-      candidate.firstNameMFN = metaphone(translit(candidate.firstName));
-    }
-
     this.filteredCandidates = this.candidates;
     this.filteredCandidatesLength = this.filteredCandidates.length;
     this.agencies = agencies;
@@ -49,11 +43,11 @@ class CandidateListController {
 
       var query = angular.copy(this.filter.query);
       if (query.firstName) {
-        query.firstNameMFN = metaphone(translit(query.firstName));
+        query.firstNameMfn = this.Metaphone.process(query.firstName);
         query.firstName = undefined;
       }
       if (query.lastName) {
-        query.lastNameMFN = metaphone(translit(query.lastName));
+        query.lastNameMfn = this.Metaphone.process(query.lastName);
         query.lastName = undefined;
       }
 

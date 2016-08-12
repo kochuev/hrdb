@@ -11,6 +11,7 @@ import SkypeHelper from './skype';
 import moment from 'moment';
 import schedule from 'node-schedule';
 import _ from 'lodash';
+import metaphone from '../../components/metaphone';
 
 
 moment.locale('ru');
@@ -42,25 +43,25 @@ bot.dialog('/', new builder.IntentDialog()
 bot.dialog('/about', [
   function (session) {
     let nameParts = _.words(session.message.text, /[\-\w\u0430-\u044f]+/ig);
-    let nameRegExps = nameParts.map(elm => {
-      return new RegExp('^' + elm + '$', 'i');
+    let nameMetaphoneRegExps = nameParts.map(elm => {
+      return new RegExp('^' + metaphone(elm) + '$', 'i');
     });
 
     let messages = [];
     if (nameParts.length === 1) {
       messages.push(
-        Candidate.findAsync({lastName: nameRegExps[0]})
+        Candidate.findAsync({lastNameMfn: nameMetaphoneRegExps[0]})
           .then(SkypeHelper.formatAboutList)
       );
 
     }
     else if (nameParts.length === 2) {
       messages.push(
-        Candidate.findAsync({firstName: nameRegExps[0], lastName: nameRegExps[1]})
+        Candidate.findAsync({firstNameMfn: nameMetaphoneRegExps[0], lastNameMfn: nameMetaphoneRegExps[1]})
           .then(SkypeHelper.formatAboutList)
       );
       messages.push(
-        Candidate.findAsync({firstName: nameRegExps[1], lastName: nameRegExps[0]})
+        Candidate.findAsync({firstNameMfn: nameMetaphoneRegExps[1], lastNameMfn: nameMetaphoneRegExps[0]})
           .then(SkypeHelper.formatAboutList)
       );
     }

@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('hrDbApp')
-  .factory('Search', function ($http, $q) {
+  .factory('Search', function ($http, $q, Metaphone) {
     /**
      * Search by different mongo criterias
      * @param query {Object}
@@ -10,11 +10,13 @@ angular.module('hrDbApp')
     function search(query) {
       return $http.post('/api/candidates/find', query)
         .then(response => {
-          if (response.status == 404) {
-            return [];
-          } else {
             return response.data;
-          }
+        })
+        .catch(err => {
+          if (err.status == 404)
+            return [];
+          else
+            throw err;
         });
     }
 
@@ -32,10 +34,13 @@ angular.module('hrDbApp')
 
         var req = {
           query: {
-            firstName: candidate.firstName,
-            lastName: candidate.lastName
+            lastNameMfn: Metaphone.process(candidate.lastName)
           }
         };
+
+        if (candidate.firstName) {
+          req.query.firstNameMfn = Metaphone.process(candidate.firstName);
+        }
 
         if (candidate._id)
           req.query._id  = {'$ne': candidate._id};

@@ -64,6 +64,8 @@ export function index(req, res) {
           $project: {
             firstName: 1,
             lastName: 1,
+            firstNameMfn: 1,
+            lastNameMfn: 1,
             preferences: 1,
             pending: {
               $cond: { if: { $ne: ['$visits.closed', false] }, then: 0, else: 1 }
@@ -98,6 +100,8 @@ export function index(req, res) {
               _id: '$_id',
               firstName:'$firstName',
               lastName: '$lastName',
+              firstNameMfn: '$firstNameMfn',
+              lastNameMfn: '$lastNameMfn',
               preferences: '$preferences'
             },
             pending:{
@@ -122,6 +126,8 @@ export function index(req, res) {
             _id: '$_id._id',
             firstName: '$_id.firstName',
             lastName: '$_id.lastName',
+            firstNameMfn: '$_id.firstNameMfn',
+            lastNameMfn: '$_id.lastNameMfn',
             preferences: '$_id.preferences',
             pending: 1,
             lastVisitDate: 1,
