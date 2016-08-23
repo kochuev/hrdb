@@ -197,7 +197,7 @@ CandidateSchema.statics.getPendingDecisions = function() {
           {
             $and: [
               {
-                "visits.proposal.dateTime": {
+                "visits.proposal.date": {
                   $lt: dateUntil
                 }
               },
