@@ -18,6 +18,10 @@ var UserSchema = new Schema({
     type: Boolean,
     default: false
   },
+  positionsAccess: {
+    type: Array,
+    default: []
+  },
   password: String,
   provider: String,
   salt: String

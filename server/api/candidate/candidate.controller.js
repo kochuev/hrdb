@@ -2,6 +2,7 @@
 
 import Bluebird from 'bluebird';
 import Candidate from './candidate.model';
+import _ from 'lodash';
 
 function handleError(res, statusCode) {
   statusCode = statusCode || 500;
@@ -26,6 +27,23 @@ function handleEntityNotFound(res) {
       return null;
     }
     return entity;
+  };
+}
+
+function handlePermissions(res, req, statusCode) {
+  statusCode = statusCode || 403;
+  return function(candidate) {
+    if (candidate.visits !== undefined && req.user.positionsAccess !== undefined) {
+      let poisitionsOfPerson = candidate.visits.map(visit => {
+        return visit.general !== undefined ? visit.general._position : undefined;
+      })
+      if (_.intersection(poisitionsOfPerson, req.user.positionsAccess).length == 0) {
+        res.status(statusCode).end();
+        return null;
+      } else {
+        return candidate;
+      }
+    }
   };
 }
 
@@ -91,6 +109,9 @@ export function index(req, res) {
                   }
                 }
               }
+            },
+            canBeViewed: {
+              $cond: { if: { $setIsSubset: [['$visits.general._position'], req.user.positionsAccess] }, then: 1, else: 0 }
             }
           }
         },
@@ -118,7 +139,15 @@ export function index(req, res) {
             },
             interviewStatus:{
               $last: '$interviewStatus'
+            },
+            canBeViewed: {
+              $max: '$canBeViewed'
             }
+          }
+        },
+        {
+          $match: {
+            'canBeViewed': 1
           }
         },
         {
@@ -133,7 +162,7 @@ export function index(req, res) {
             lastVisitDate: 1,
             _lastVisitPosition: 1,
             _lastVisitAgency: 1,
-            interviewStatus: 1
+            interviewStatus: 1,
           }
         }
       ]),
@@ -152,6 +181,7 @@ export function index(req, res) {
       let combinedList = lists.reduce((a, b) => {
         return a.concat(b);
       });
+
       res.status(200).json(combinedList);
     })
     .catch(handleError(res));
@@ -161,6 +191,7 @@ export function index(req, res) {
 export function show(req, res) {
   Candidate.findByIdAsync(req.params.id)
     .then(handleEntityNotFound(res))
+    .then(handlePermissions(res, req))
     .then(responseWithResult(res))
     .catch(handleError(res));
 }
@@ -176,9 +207,12 @@ export function create(req, res) {
 export function update(req, res) {
   var newCandidate = req.body;
 
-  Candidate.findByIdAndUpdateAsync(req.params.id, newCandidate, {overwrite: true})
+  Candidate.findByIdAsync(req.params.id)
     .then(handleEntityNotFound(res))
+    .then(handlePermissions(res, req))
+    .then(res => Candidate.findByIdAndUpdateAsync(req.params.id, newCandidate, {overwrite: true}))
     .then(res => Candidate.findByIdAsync(req.params.id))
+    .then(handlePermissions(res, req))
     .then(responseWithResult(res))
     .catch(handleError(res));
 
@@ -188,13 +222,14 @@ export function update(req, res) {
 export function destroy(req, res) {
   Candidate.findByIdAsync(req.params.id)
     .then(handleEntityNotFound(res))
+    .then(handlePermissions(res, req))
     .then(removeEntity(res))
     .catch(handleError(res));
 }
 
 // Finds a Candidate from the DB
 export function find(req, res) {
-  Candidate.findAsync(req.body.query)
+  Candidate.findAsync(req.body.query, '-visits')
     .then(handleEntityNotFound(res))
     .then(responseWithResult(res))
     .catch(handleError(res));
