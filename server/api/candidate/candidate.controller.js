@@ -111,7 +111,7 @@ export function index(req, res) {
                 }
               }
             },
-            canBeViewed: auth.hasRole('admin') || req.user.positionsAccess === undefined || req.user.positionsAccess.length == 0 ? 1 : {
+            canBeViewed: (auth.hasRole('admin') || req.user.positionsAccess === undefined || req.user.positionsAccess.length == 0) ? {$literal: 1} : {
               $cond: { if: { $setIsSubset: [['$visits.general._position'], req.user.positionsAccess] }, then: 1, else: 0 }
             }
           }
