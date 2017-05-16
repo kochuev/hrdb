@@ -33,7 +33,7 @@ function handleEntityNotFound(res) {
 function handlePermissions(res, req, statusCode) {
   statusCode = statusCode || 403;
   return function(candidate) {
-    if (req.user.role != 'admin' && candidate.visits !== undefined && req.user.positionsAccess !== undefined) {
+    if (req.user.role != 'admin' && candidate.visits !== undefined && req.user.positionsAccess !== undefined && req.user.positionsAccess.length > 0) {
       let poisitionsOfPerson = candidate.visits.map(visit => {
         return visit.general !== undefined ? visit.general._position : undefined;
       })
