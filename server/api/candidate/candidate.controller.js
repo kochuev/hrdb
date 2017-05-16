@@ -2,7 +2,6 @@
 
 import Bluebird from 'bluebird';
 import Candidate from './candidate.model';
-import * as auth from '../../auth/auth.service';
 import _ from 'lodash';
 
 function handleError(res, statusCode) {
@@ -34,17 +33,16 @@ function handleEntityNotFound(res) {
 function handlePermissions(res, req, statusCode) {
   statusCode = statusCode || 403;
   return function(candidate) {
-    if (candidate.visits !== undefined && req.user.positionsAccess !== undefined) {
+    if (req.user.role != 'admin' && candidate.visits !== undefined && req.user.positionsAccess !== undefined) {
       let poisitionsOfPerson = candidate.visits.map(visit => {
         return visit.general !== undefined ? visit.general._position : undefined;
       })
       if (_.intersection(poisitionsOfPerson, req.user.positionsAccess).length == 0) {
         res.status(statusCode).end();
         return null;
-      } else {
-        return candidate;
       }
     }
+    return candidate;
   };
 }
 
@@ -111,7 +109,7 @@ export function index(req, res) {
                 }
               }
             },
-            canBeViewed: (auth.hasRole('admin') || req.user.positionsAccess === undefined || req.user.positionsAccess.length == 0) ? {$literal: 1} : {
+            canBeViewed: (req.user.role == 'admin' || req.user.positionsAccess === undefined || req.user.positionsAccess.length == 0) ? {$literal: 1} : {
               $cond: { if: { $setIsSubset: [['$visits.general._position'], req.user.positionsAccess] }, then: 1, else: 0 }
             }
           }
