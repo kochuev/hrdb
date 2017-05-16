@@ -2,6 +2,7 @@
 
 import Bluebird from 'bluebird';
 import Candidate from './candidate.model';
+import * as auth from '../../auth/auth.service';
 import _ from 'lodash';
 
 function handleError(res, statusCode) {
@@ -110,7 +111,7 @@ export function index(req, res) {
                 }
               }
             },
-            canBeViewed: {
+            canBeViewed: auth.hasRole('admin') || req.user.positionsAccess === undefined || req.user.positionsAccess.length == 0 ? 1 : {
               $cond: { if: { $setIsSubset: [['$visits.general._position'], req.user.positionsAccess] }, then: 1, else: 0 }
             }
           }
