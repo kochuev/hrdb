@@ -43,6 +43,9 @@ bot.dialog('/', new builder.IntentDialog()
 bot.dialog('/about', [
   function (session) {
     let nameParts = _.words(session.message.text, /[\-\w\u0430-\u044f]+/ig);
+    // first word now is @hrbot command
+    nameParts = nameParts.shift();
+
     let nameMetaphoneRegExps = nameParts.map(elm => {
       return new RegExp('^' + metaphone(elm) + '$', 'i');
     });
