@@ -43,8 +43,9 @@ bot.dialog('/', new builder.IntentDialog()
 bot.dialog('/about', [
   function (session) {
     let nameParts = _.words(session.message.text, /[\-\w\u0430-\u044f]+/ig);
+
     // first word @hrbot reference, so remove it
-    if (nameParts[0] == '@' + config.skypeBot.botDisplayName) {
+    if (nameParts[0] == config.skypeBot.botDisplayName) {
       nameParts.shift();
     }
 
