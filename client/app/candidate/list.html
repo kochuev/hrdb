@@ -6,30 +6,30 @@
   <table class="table table-hover candidate-list">
     <thead>
       <tr>
-        <th>
+        <th style="width: 180px">
           First Name
           <a href ng-click="vm.sortParam('firstName')">
             <i class="fa" ng-class="vm.filter.sort.field == 'firstName' ? (vm.filter.sort.reverse ? 'fa-sort-alpha-desc' : 'fa-sort-alpha-asc') : 'fa-sort'"></i>
           </a>
         </th>
-        <th>
+        <th style="width: 180px">
           Last Name
           <a href ng-click="vm.sortParam('lastName')">
             <i class="fa" ng-class="vm.filter.sort.field == 'lastName' ? (vm.filter.sort.reverse ? 'fa-sort-alpha-desc' : 'fa-sort-alpha-asc') : 'fa-sort'"></i>
           </a>
         </th>
-        <th>
+        <th style="width: 150px">
           Last visit
           <a href ng-click="vm.sortParam('lastVisitDate.getTime()')">
             <i class="fa" ng-class="vm.filter.sort.field == 'lastVisitDate.getTime()' ? (vm.filter.sort.reverse ? 'fa-sort-alpha-desc' : 'fa-sort-alpha-asc') : 'fa-sort'"></i>
           </a>
         </th>
-        <th>
+        <th style="width: 270px">
           Last position
         </th>
         <th>Preferences</th>
         <th>Pending visits</th>
-        <th></th>
+        <th style="width: 80px"></th>
       </tr>
       <tr>
         <th><input class="form-control" type="text" ng-model="vm.filter.query.firstName"></th>

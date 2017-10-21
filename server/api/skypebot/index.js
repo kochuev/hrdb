@@ -1,7 +1,7 @@
 'use strict';
 
 import {Router} from 'express';
-import builder from 'botbuilder';
+import * as builder from 'botbuilder';
 import config from '../../config/environment';
 import calendar from '../../components/calendar';
 import Candidate from '../candidate/candidate.model';
