@@ -3,5 +3,6 @@
 angular.module('hrDbApp.admin', [
   'hrDbApp',
   'hrDbApp.auth',
-  'ui.router'
+  'ui.router',
+  'ui.toggle'
 ]);

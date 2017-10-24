@@ -1,0 +1,113 @@
+<navbar></navbar>
+
+<div class="container">
+
+  <form class="form-horizontal" name="form" ng-submit="vm.saveUser(form)">
+
+  <div class="form-group">
+    <div class="col-sm-12">
+      <button class="btn btn-default pull-right" ui-sref="admin.userlist">Back to list</button>
+    </div>
+  </div>
+
+  <div class="form-group" ng-class="{ 'has-success': form.username.$valid && vm.submitted,
+                                            'has-error': form.username.$invalid && vm.submitted }">
+    <label class="col-sm-3 control-label">User Name</label>
+    <div class="col-sm-9">
+      <input type="text" class="form-control" name="name" placeholder="user Name" ng-model="vm.user.name" required>
+
+      <p class="help-block" ng-show="form.name.$error.required && vm.submitted">
+        A name is required
+      </p>
+    </div>
+  </div>
+
+  <div class="form-group" ng-class="{ 'has-success': form.email.$valid && vm.submitted,
+                                            'has-error': form.email.$invalid && vm.submitted }">
+    <label class="col-sm-3 control-label">Email</label>
+    <div class="col-sm-9">
+      <input type="email" class="form-control" name="email" placeholder="Email" ng-model="vm.user.email" required mongoose-error>
+
+      <p class="help-block" ng-show="form.email.$error.email && vm.submitted">
+        Doesn't look like a valid email.
+      </p>
+      <p class="help-block" ng-show="form.email.$error.required && vm.submitted">
+        What's your email address?
+      </p>
+      <p class="help-block" ng-show="form.email.$error.mongoose">
+        {{ vm.errors.email }}
+      </p>
+    </div>
+  </div>
+
+  <div class="form-group" ng-class="{ 'has-success': form.password.$valid && vm.submitted,
+                                            'has-error': form.password.$invalid && vm.submitted }">
+    <label class="col-sm-3 control-label">New Password</label>
+    <div class="col-sm-7">
+      <input type="password" class="form-control" name="password"
+             ng-model="vm.user.password" ng-disabled="!vm.user.changePasswordFlag"
+             ng-minlength="vm.user.changePasswordFlag ? 3 : 0" ng-required="vm.user.changePasswordFlag" mongoose-error>
+
+      <p class="help-block"
+         ng-show="(form.password.$error.minlength || form.password.$error.required) && vm.submitted">
+        Password must be at least 3 characters.
+      </p>
+      <p class="help-block" ng-show="form.password.$error.mongoose">
+        {{ vm.errors.password }}
+      </p>
+    </div>
+    <div class="col-sm-2">
+      <toggle ng-model="vm.user.changePasswordFlag" class="change-password-toggle pull-right" offstyle="btn-success" onstyle="btn-danger" on="Change" off="Do Not Change"></toggle>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="col-sm-3 control-label">Active</label>
+    <div class="col-sm-9">
+      <toggle ng-model="vm.user.active"></toggle>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label class="col-sm-3 control-label">Role</label>
+    <div class="col-sm-9">
+      <div class="btn-group">
+        <label class="btn btn-default" ng-model="vm.user.role" uib-btn-radio="'admin'">Admin</label>
+        <label class="btn btn-default" ng-model="vm.user.role" uib-btn-radio="'user'">User</label>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group" ng-if="vm.user.role == 'user'">
+    <label class="col-sm-3 control-label">Limited job positions access</label>
+    <div class="col-sm-9">
+      <toggle ng-model="vm.user.limitedPositionsFlag"></toggle>
+    </div>
+  </div>
+
+    <div class="form-group" ng-if="vm.user.role == 'user' && vm.user.limitedPositionsFlag">
+      <label class="col-sm-3 control-label">Access to job positions</label>
+      <div class="col-sm-9">
+        <ul class="list-group user-list">
+          <li class="list-group-item row" ng-repeat="position in vm.positions">
+            <input type="checkbox" ng-checked="vm.user.positionsAccess.indexOf(position._id) > -1" ng-click="vm.togglePositionsSelection(position._id)">
+            <label class="col-sm-10">
+              {{position.name}}
+            </label>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="col-sm-12">
+        <div class="btn-group pull-right">
+          <button class="btn btn-inverse btn-default" type="submit">Save</button>
+          <a class="btn btn-default btn-default" ui-sref="admin.userlist">Back To List</a>
+        </div>
+      </div>
+    </div>
+
+  </form>
+
+</div>

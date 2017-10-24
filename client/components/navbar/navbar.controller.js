@@ -21,7 +21,7 @@ class NavbarController {
   },
   {
     'title': 'Admin',
-    'state': 'admin'
+    'state': 'admin.userlist'
   }];
 
   isCollapsed = true;

@@ -12,9 +12,14 @@
 .user-list li .user-info {
 	flex-grow: 1;
 }
-.user-list li .trash, .user-list li .activation {
+.user-list li .trash,
+.user-list li .activation,
+.user-list li .edit {
 	display: flex;
 	align-items: center;
 	text-decoration: none;
-  padding: 0 3px;
+  padding: 0 10px;
+}
+.change-password-toggle .toggle {
+  min-width: 130px;
 }

@@ -23,6 +23,9 @@ function UserResource($resource) {
       params: {
         controller:'toggleActivation'
       }
+    },
+    update: {
+      method:'PUT'
     }
   });
 }

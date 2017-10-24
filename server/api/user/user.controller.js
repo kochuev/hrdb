@@ -58,12 +58,12 @@ export function create(req, res, next) {
 export function show(req, res, next) {
   var userId = req.params.id;
 
-  User.findByIdAsync(userId)
+  User.findOneAsync({ _id: userId }, '-salt -password')
     .then(user => {
       if (!user) {
         return res.status(404).end();
       }
-      res.json(user.profile);
+      res.json(user);
     })
     .catch(err => next(err));
 }
@@ -132,6 +132,35 @@ export function me(req, res, next) {
         return res.status(401).end();
       }
       res.json(user);
+    })
+    .catch(err => next(err));
+}
+
+/**
+ * Get my info
+ */
+export function update(req, res, next) {
+  var userId = req.params.id;
+
+  User.findByIdAsync(userId)
+    .then(user => {
+      if (!user) {
+        return res.status(404).end();
+      }
+      user.name = req.body.name;
+      user.email = req.body.email;
+      if (req.body.changePasswordFlag) {
+        user.password = req.body.password;
+      }
+      user.role = req.body.role;
+      user.positionsAccess = req.body.positionsAccess;
+      user.active = req.body.active;
+
+      user.saveAsync()
+        .then(() => {
+          res.status(204).end();
+        })
+        .catch(validationError(res));
     })
     .catch(err => next(err));
 }
