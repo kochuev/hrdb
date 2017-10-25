@@ -1,11 +1,12 @@
 <navbar></navbar>
 
 <div class="container">
-  <h1>By Month</h1>
+  <h1>{{vm.position.name}}</h1>
+  <h3>By Month</h3>
   <canvas id="line" class="chart chart-line" chart-data="vm.monthlyChart.data" chart-labels="vm.monthlyChart.labels"></canvas>
 
-  <h1>By Agency</h1>
-  <table class="table table-hover table-stripped">
+  <h3>By Agency</h3>
+  <table class="table table-hover">
     <tr>
       <th>Agency</th>
       <th>CV Review Pass Ratio</th>
@@ -14,7 +15,7 @@
       <th>Hire Ratio</th>
       <th>Total Candidates</th>
     </tr>
-    <tr ng-repeat="stat in vm.statsByAgency" ng-class="{'danger': stat.office == 0}">
+    <tr ng-repeat="stat in vm.statsByAgency" ng-class="{'danger': stat.proposal == 0}">
       <td>{{stat._id.agency ? vm.agencies[stat._id.agency].name : "No Agency"}}</td>
       <td>{{stat.skype/stat.total*100 | number:2}}%</td>
       <td>{{stat.office/stat.total*100 | number:2}}%</td>
@@ -24,8 +25,8 @@
     </tr>
   </table>
 
-  <h1>By Origin</h1>
-  <table class="table table-hover table-stripped">
+  <h3>By Origin</h3>
+  <table class="table table-hover">
     <tr>
       <th>Origin</th>
       <th>CV Review Pass Ratio</th>
@@ -34,7 +35,7 @@
       <th>Hire Ratio</th>
       <th>Total Candidates</th>
     </tr>
-    <tr ng-repeat="stat in vm.statsByOrigin" ng-class="{'danger': stat.office == 0}">
+    <tr ng-repeat="stat in vm.statsByOrigin" ng-class="{'danger': stat.proposal == 0}">
       <td>{{stat._id.origin ? vm.origins[stat._id.origin].name : "No Origin"}}</td>
       <td>{{stat.skype/stat.total*100 | number:2}}%</td>
       <td>{{stat.office/stat.total*100 | number:2}}%</td>

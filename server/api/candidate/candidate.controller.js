@@ -332,7 +332,35 @@ export function statsByMonth(req, res) {
 
   Candidate.aggregateAsync(aggregateQuery)
     .then(stats => {
-      res.status(200).json(stats);
+      let result1 = {};
+      let result2 = [];
+      let statsFromDate = null;
+
+      stats.forEach(val => {
+        let statDate = new Date();
+
+        statDate.setMonth(val._id.month - 1, 1);
+        statDate.setFullYear(val._id.year);
+        statDate.setHours(0,0,0,0);
+
+        result1[statDate] = val.total;
+
+        if (statsFromDate === null) {
+          statsFromDate = statDate;
+        }
+      });
+
+      let now = new Date();
+      while (statsFromDate <= now) {
+        if (result1[statsFromDate] === undefined) {
+          result2.push(0);
+        } else {
+          result2.push({date: statsFromDate, total: result1[statsFromDate]});
+        }
+        statsFromDate.setMonth(statsFromDate.getMonth()+1);
+      }
+
+      res.status(200).json(result2);
     })
     .catch(handleError(res));
 }

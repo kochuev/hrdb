@@ -4,15 +4,13 @@
 
 class StatsController {
 
-  constructor($http, $scope, $filter, Modal, positions, agencies, origins, statsByOrigin, statsByAgency, statsByMonth) {
+  constructor($http, $stateParams, Modal, positions, agencies, origins, statsByOrigin, statsByAgency, statsByMonth) {
     this.$http = $http;
-    this.$filter = $filter;
-    this.$scope = $scope;
     this.Modal = Modal;
 
     this.statsByOrigin = statsByOrigin.data;
     this.statsByAgency = statsByAgency.data;
-    this.positions = positions;
+    this.position = positions[$stateParams.id];
     this.agencies = agencies;
     this.origins = origins;
 
@@ -21,7 +19,7 @@ class StatsController {
       data: []
     };
     for (let point of statsByMonth.data) {
-      this.monthlyChart.labels.push(point._id.month + "." + point._id.year);
+      this.monthlyChart.labels.push(point.date.toLocaleString(navigator.language, {month: 'short', year: '2-digit'}));
       this.monthlyChart.data.push(point.total);
     }
   }
