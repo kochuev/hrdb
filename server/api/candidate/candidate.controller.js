@@ -346,7 +346,7 @@ export function statsByMonth(req, res) {
         result1[statDate] = val.total;
 
         if (statsFromDate === null) {
-          statsFromDate = statDate;
+          statsFromDate = new Date(statDate.getTime());
         }
       });
 
