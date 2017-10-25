@@ -353,9 +353,9 @@ export function statsByMonth(req, res) {
       let now = new Date();
       while (statsFromDate <= now) {
         if (result1[statsFromDate] === undefined) {
-          result2.push({date: statsFromDate, total: 0});
+          result2.push({date: new Date(statsFromDate.getTime()), total: 0});
         } else {
-          result2.push({date: statsFromDate, total: result1[statsFromDate]});
+          result2.push({date: new Date(statsFromDate.getTime()), total: result1[statsFromDate]});
         }
         statsFromDate.setMonth(statsFromDate.getMonth()+1);
       }

@@ -15,7 +15,7 @@
       <th>Hire Ratio</th>
       <th>Total Candidates</th>
     </tr>
-    <tr ng-repeat="stat in vm.statsByAgency" ng-class="{'danger': stat.proposal == 0}">
+    <tr ng-repeat="stat in vm.statsByAgency" ng-class="{'danger': stat.proposal == 0 && stat.hire == 0}">
       <td>{{stat._id.agency ? vm.agencies[stat._id.agency].name : "No Agency"}}</td>
       <td>{{stat.skype/stat.total*100 | number:2}}%</td>
       <td>{{stat.office/stat.total*100 | number:2}}%</td>
@@ -35,7 +35,7 @@
       <th>Hire Ratio</th>
       <th>Total Candidates</th>
     </tr>
-    <tr ng-repeat="stat in vm.statsByOrigin" ng-class="{'danger': stat.proposal == 0}">
+    <tr ng-repeat="stat in vm.statsByOrigin" ng-class="{'danger': stat.proposal == 0 && stat.hire == 0}">
       <td>{{stat._id.origin ? vm.origins[stat._id.origin].name : "No Origin"}}</td>
       <td>{{stat.skype/stat.total*100 | number:2}}%</td>
       <td>{{stat.office/stat.total*100 | number:2}}%</td>
