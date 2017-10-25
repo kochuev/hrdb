@@ -30,6 +30,8 @@ module.exports = function(config) {
       'client/bower_components/translit/dist/translit.js',
       'client/bower_components/metaphone/metaphone.js',
       'client/bower_components/angular-bootstrap-toggle/dist/angular-bootstrap-toggle.min.js',
+      'client/bower_components/chart.js/dist/Chart.js',
+      'client/bower_components/angular-chart.js/dist/angular-chart.js',
       'client/bower_components/angular-mocks/angular-mocks.js',
       // endbower
       'node_modules/socket.io-client/socket.io.js',

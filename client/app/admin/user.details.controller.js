@@ -3,11 +3,10 @@
 (function() {
 
 class UserDetailsController {
-  constructor(User, Modal, $http, $scope, userObj) {
+  constructor(User, Modal, $http, $scope, $state, userObj) {
     this.Modal = Modal;
     this.User = User;
-    // Use the User $resource to fetch all users
-    //this.users = User.query();
+    this.$state = $state;
     this.user = userObj.data;
     this.user.changePasswordFlag = false;
     this.user.limitedPositionsFlag = this.user.positionsAccess && this.user.positionsAccess.length > 0;
@@ -42,7 +41,7 @@ class UserDetailsController {
       this.User.update(this.user).$promise
         .then(() => {
           // Account created, redirect to home
-          // this.$state.go('main');
+          this.$state.go('admin.userlist');
           this.success = true;
         })
         .catch(err => {

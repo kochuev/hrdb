@@ -33,7 +33,7 @@ function handleEntityNotFound(res) {
 function handlePermissions(res, req, statusCode) {
   statusCode = statusCode || 403;
   return function(candidate) {
-    if (req.user.role != 'admin' && candidate.visits !== undefined && req.user.positionsAccess !== undefined && req.user.positionsAccess.length > 0) {
+    if (req.user.hasLimitedPositionAccess() && candidate.visits !== undefined) {
       let poisitionsOfPerson = candidate.visits.map(visit => {
         return visit.general !== undefined ? visit.general._position : undefined;
       })
@@ -231,5 +231,108 @@ export function find(req, res) {
   Candidate.findAsync(req.body.query, '-visits')
     .then(handleEntityNotFound(res))
     .then(responseWithResult(res))
+    .catch(handleError(res));
+}
+
+// Return statistics by origin/agency for position
+export function statsByPosition(req, res) {
+  let positionId = req.params.id;
+
+  if (req.user.hasLimitedPositionAccess()) {
+    if (req.user.positionsAccess.indexOf(positionId) == -1) {
+      res.send(403).end;
+      return;
+    }
+  }
+
+  let groupId;
+  if (req.params.by == 'agency') {
+    groupId = {agency: '$visits.general._agency'};
+  } else {
+    groupId = {origin: '$visits.general._origin'};
+  }
+
+  let aggregateQuery = [
+    { $unwind : "$visits" },
+    {
+      $match: {
+        'visits.general._position': positionId
+      }
+    },
+    {
+      $project: {
+        visits: 1,
+        skype: { $cond: ['$visits.skype.planned', 1, 0]},
+        office: { $cond: ['$visits.office.planned', 1, 0]},
+        proposal: { $cond: ['$visits.proposal.done', 1, 0]},
+        hire: { $cond: [{ $eq: [ '$visits.closed', 'hired' ] }, 1, 0] },
+      }
+    },
+    {
+      $group : {
+        _id: groupId,
+        total: { $sum: 1 },
+        skype: { $sum:  '$skype'},
+        office: { $sum: '$office' },
+        proposal: { $sum: '$proposal' },
+        hire: { $sum: '$hire' },
+      }
+    },
+    {
+      $sort: {
+        proposal : -1
+      }
+    }
+  ];
+
+  Candidate.aggregateAsync(aggregateQuery)
+    .then(stats => {
+      res.status(200).json(stats);
+    })
+    .catch(handleError(res));
+}
+
+// Return statistics by origin/agency for position
+export function statsByMonth(req, res) {
+  let positionId = req.params.id;
+
+  if (req.user.hasLimitedPositionAccess()) {
+    if (req.user.positionsAccess.indexOf(positionId) == -1) {
+      res.send(403).end;
+      return;
+    }
+  }
+
+  let aggregateQuery = [
+    { $unwind : "$visits" },
+    {
+      $match: {
+      'visits.general._position': positionId
+      }
+    },
+    {
+      $project: {
+        month: { $month: '$visits.general.date' },
+        year: { $year: '$visits.general.date' },
+      }
+    },
+    {
+      $group : {
+        _id: {year: '$year', month: '$month'},
+        total: { $sum: 1 }
+      }
+    },
+    {
+      $sort: {
+        '_id.year' : 1,
+        '_id.month': 1
+      }
+    }
+  ];
+
+  Candidate.aggregateAsync(aggregateQuery)
+    .then(stats => {
+      res.status(200).json(stats);
+    })
     .catch(handleError(res));
 }

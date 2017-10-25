@@ -4,7 +4,7 @@
 
 class CandidateListController {
 
-  constructor($http, $state, $scope, $cookies, $filter, Modal, candidatesObj, agencies, positions, appConfig, Metaphone) {
+  constructor($http, $state, $scope, $cookies, $filter, Modal, candidatesObj, agencies, positions, appConfig, Metaphone, Auth) {
     this.$http = $http;
     this.$cookies = $cookies;
     this.$filter = $filter;
@@ -19,6 +19,18 @@ class CandidateListController {
     this.agencies = agencies;
     this.positions = positions;
     this.appConfig = appConfig;
+
+    this.positionsAccess = Auth.getCurrentUser().positionsAccess;
+    if (Auth.hasRole("admin") || this.positionsAccess === undefined || this.positionsAccess.length === 0) {
+      this.positionsFilteredByAccess = this.positions;
+    } else {
+      this.positionsFilteredByAccess = [];
+      for (let pos of this.positionsAccess) {
+        if (this.positions[pos] !== undefined) {
+          this.positionsFilteredByAccess.push(this.positions[pos]);
+        }
+      }
+    }
 
     this.initFilters();
   }

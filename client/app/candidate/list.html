@@ -37,7 +37,7 @@
         <th></th>
         <th>
           <select class="form-control"
-                  ng-options="position._id as position.name for position in vm.positions"
+                  ng-options="position._id as position.name for position in vm.positionsFilteredByAccess"
                   ng-model="vm.filter.query._lastVisitPosition"
                   required>
             <option value=""> --- </option>

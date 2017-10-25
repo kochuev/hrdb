@@ -45,6 +45,13 @@ angular.module('hrDbApp')
        */
       getPositions() {
         return getEntities('position');
+      },
+      /**
+       * Retrieves all origins
+       * @return {Promise}
+       */
+      getOrigins() {
+        return getEntities('origin');
       }
     };
   });

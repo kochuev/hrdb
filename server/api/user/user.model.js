@@ -217,6 +217,15 @@ UserSchema.methods = {
         callback(null, key.toString('base64'));
       }
     });
+  },
+
+  /**
+   * Checks if user has limited access to job positions
+   *
+   * @returns {boolean}
+   */
+  hasLimitedPositionAccess() {
+    return this.role != 'admin'  && this.positionsAccess !== undefined && this.positionsAccess.length > 0;
   }
 };
 
