@@ -10,6 +10,7 @@ import Origin from '../api/candidate/origin.model';
 import Position from '../api/candidate/position.model';
 import Agency from '../api/candidate/agency.model';
 import Candidate from '../api/candidate/candidate.model';
+import moment from 'moment';
 
 Thing.find({}).removeAsync()
   .then(() => {
@@ -64,8 +65,11 @@ User.find({}).removeAsync()
     });
   });
 
+// TODO: find out if there is any reason to use methodAsync, mongoose model.remove() for example return Query,
+// TODO: it is not a Promise, but it has .then() and can be use as Promise */
 
-let data = {};
+
+let populatedData = {};
 Origin.find({})
     .remove()
     .then(() => Origin.create({
@@ -73,7 +77,7 @@ Origin.find({})
     }))
     .then((origins) => {
         console.log('finished populating origins');
-        data.origins = origins;
+        populatedData.origins = origins;
     })
     .then(() => Position.find({}).remove())
     .then(() => Position.create({
@@ -90,7 +94,7 @@ Origin.find({})
     })
     .then(() => Position.find({}))
     .then((positions) => {
-        data.positions = positions;
+        populatedData.positions = positions;
     })
     .then(() => Agency.find({}).remove())
     .then(() => Agency.create({
@@ -98,21 +102,57 @@ Origin.find({})
     }))
     .then((agencies) => {
         console.log('finished populating agencies');
-        data.agencies = agencies;
-        console.log(data);
+        populatedData.agencies = agencies;
     })
     .then(() => Candidate.find({}).remove())
-    // TODO: Add candidates using data object
-    /*.then(() => Candidate.create({
-        firstName: 'Name example',
-        lastName: 'Last name example',
-        email: 'candidate@email.com',
-        visits: [{
-            general: {
-                date: new Date('01/20/2018'),
-                _agency: 'Test agency',
-                _position: 'Symfony developer',
-                _origin: 'Test origin'
-            }
-        }]
-    }))*/;
+    .then(() => {
+        let candidates = [];
+
+        let dates = [
+            // March
+            '03/01/2018', '03/02/2018', '03/03/2018', '03/04/2018', '03/05/2018',
+            '03/06/2018', '03/07/2018', '03/08/2018', '03/09/2018', '03/10/2018',
+            '03/11/2018', '03/12/2018', '03/13/2018', '03/14/2018', '03/15/2018',
+            '03/16/2018', '03/17/2018', '03/18/2018', '03/19/2018', '03/20/2018',
+
+            // May
+            '04/06/2018', '04/07/2018', '04/08/2018', '04/09/2018', '04/10/2018',
+            '04/11/2018', '04/12/2018', '04/13/2018', '04/14/2018', '04/15/2018'
+        ]
+            .map(dateStr => new Date(dateStr));
+
+        let agencies = Array.isArray(populatedData.agencies) ? populatedData.agencies : [populatedData.agencies];
+        let positions = Array.isArray(populatedData.positions) ? populatedData.positions : [populatedData.positions];
+        let origins = Array.isArray(populatedData.origins) ? populatedData.origins : [populatedData.origins];
+
+        // TODO: Make sure these nested loops are best solution
+        dates.forEach(date => {
+            agencies.forEach(agency => {
+                positions.forEach(position => {
+                    origins.forEach(origin => {
+
+                        let formattedDate = moment(date).format('MM/DD/YYYY');
+                        candidates.push({
+                            firstName: `James (${position.name}/${formattedDate}/${agency.name}/${origin.name})`,
+                            lastName: 'Bond',
+                            visits: [{
+                                general: {
+                                    date: date,
+                                    _agency: agency._id,
+                                    _position: position._id,
+                                    _origin: origin._id
+                                }
+                            }]
+                        });
+
+                    });
+                });
+            });
+        });
+
+        return Candidate.create(candidates);
+    })
+    .then(() => Candidate.find({}))
+    .then((candidatesFound) => {
+        console.log('Candidates found after populating: ' + candidatesFound.length);
+    });
