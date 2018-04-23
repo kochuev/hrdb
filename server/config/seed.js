@@ -141,7 +141,8 @@ Origin.find({})
                                     _agency: agency._id,
                                     _position: position._id,
                                     _origin: origin._id
-                                }
+                                },
+                                active: true
                             }]
                         });
 
