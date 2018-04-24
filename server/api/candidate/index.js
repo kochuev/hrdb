@@ -13,7 +13,6 @@ router.put('/:id', auth.isAuthenticated(), controller.update);
 router.patch('/:id', auth.isAuthenticated(), controller.update);
 router.delete('/:id', auth.isAuthenticated(), controller.destroy);
 router.post('/find', auth.isAuthenticated(), controller.find);
-router.get('/stats/month/', auth.isAuthenticated(), controller.statsByMonthByPositions);
 router.get('/stats/month/:id', auth.isAuthenticated(), controller.statsByMonth);
 router.get('/stats/:by/:id', auth.isAuthenticated(), controller.statsByPosition);
 
