@@ -15,6 +15,7 @@ export default function(app) {
   app.use('/api/candidates', require('./api/candidate'));
   app.use('/api/entities', require('./api/entity'));
   app.use('/api/bot', require('./api/skypebot'));
+  app.use('/api/stats', require('./api/stats'));
 
   app.use('/auth', require('./auth'));
 
