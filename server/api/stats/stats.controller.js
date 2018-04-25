@@ -1,6 +1,5 @@
 'use strict';
 
-// someFunc
 import Candidate from "../candidate/candidate.model";
 import moment from 'moment';
 
@@ -10,19 +9,6 @@ function handleError(res, statusCode) {
         res.status(statusCode).send(err);
     };
 }
-
-/*function isDateQueryValid(date) {
-    return (typeof date === 'string' && /^\d{2}-\d{2}-\d{4}$/.test(date));
-}
-
-function isPositionsQueryValid(positions){
-    let pattern = new RegExp('^[a-f\\d]{24}$', 'i'); // match 24 symbols hexadecimal string
-    if(Array.isArray(positions)){
-        return positions.every(position => pattern.test(position));
-    }else{
-        return pattern.test(positions);
-    }
-}*/
 
 //TODO: Move this this function to separate file? /server/api/stats/stats.validator.js ? Rewrite as a Class?
 //TODO: Am I inventing a wheel here? Does Express have build in solutions for it?
@@ -66,7 +52,6 @@ function isVisitsByMonthQueryValid(query){
         isValid: invalidProps === 0,
         message: messages.join(' \n')
     };
-
 }
 
 
@@ -91,7 +76,6 @@ export function visitsByMonth(req, res) {
         res.status(400).send(validator.message);
         return;
     }
-
 
     if(req.query.startDate){
         startDate = new Date(req.query.startDate);
