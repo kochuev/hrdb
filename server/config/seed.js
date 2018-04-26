@@ -44,31 +44,6 @@ Thing.find({}).removeAsync()
     });
   });
 
-User.find({}).removeAsync()
-  .then(() => {
-    User.createAsync({
-      provider: 'local',
-      name: 'Test User',
-      email: 'test@example.com',
-      password: 'test',
-      active: true
-    }, {
-      provider: 'local',
-      role: 'admin',
-      name: 'Admin',
-      email: 'admin@example.com',
-      password: 'admin',
-      active: true
-    })
-    .then(() => {
-      console.log('finished populating users');
-    });
-  });
-
-
-// TODO: find out if there is any reason to use methodAsync, mongoose model.remove() for example return Query,
-// TODO: it is not a Promise, but it has .then() and can be use as Promise */
-
 
 let seedCollection = function (Collection, items){
 
@@ -77,7 +52,6 @@ let seedCollection = function (Collection, items){
         .then(() => Collection.create(items));
 
 };
-
 
 let seedCandidates = function(){
 
@@ -150,6 +124,33 @@ let seedCandidates = function(){
 
 };
 
+let seedUsers = function (positionsAccess){
+
+    return User.find({}).remove()
+        .then(() => Position.findOne({name: 'Angular developer'}))
+        .then((position) => User.create({
+            provider: 'local',
+            name: 'Test User',
+            email: 'test@example.com',
+            password: 'test',
+            active: true
+        }, {
+            provider: 'local',
+            role: 'admin',
+            name: 'Admin',
+            email: 'admin@example.com',
+            password: 'admin',
+            active: true
+        }, {
+            provider: 'local',
+            role: 'user',
+            name: 'User with role "user" and access to "Angular developer" position only',
+            email: 'user@example.com',
+            password: 'user',
+            active: true,
+            positionsAccess: [position._id.toString()]
+        }));
+};
 
 Promise.all([
     seedCollection(Origin, [{name: 'Test origin'}]),
@@ -165,6 +166,7 @@ Promise.all([
     }*/])
 ])
     .then(() => seedCandidates())
+    .then(() => seedUsers())
     .then(() => {
-        console.log('Finished populating Origin, Agency, Position, Candidate');
+        console.log('Finished populating Origin, Agency, Position, Candidates, Users');
     });
