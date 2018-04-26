@@ -10,14 +10,11 @@ function handleError(res, statusCode) {
     };
 }
 
-//TODO: Move this this function to separate file? /server/api/stats/stats.validator.js ? Rewrite as a Class?
-//TODO: Am I inventing a wheel here? Does Express have build in solutions for it?
+//TODO: Move this this function to stats.validator.js middleware
 function isVisitsByMonthQueryValid(query){
     let invalidProps = 0;
     let messages = [];
 
-    //TODO: update validator, we don't need stats for ALL positions, empty query.positions should be invalid
-    //TODO: check positions if user has access to it
     // positions
     if(query.positions){
         let pattern = new RegExp('^[a-f\\d]{24}$', 'i'); // match 24 symbols hexadecimal string
@@ -33,6 +30,9 @@ function isVisitsByMonthQueryValid(query){
                  messages.push(positionsInvalidMessage);
              }
         }
+    }else{
+        invalidProps++;
+        messages.push('The positions parameter is required, specify at least one');
     }
 
     // startDate and endDate
@@ -59,26 +59,30 @@ function isVisitsByMonthQueryValid(query){
 
 export function visitsByMonth(req, res) {
 
-    //TODO: move it to validator
-    /*if (req.user.hasLimitedPositionAccess()) {
-        positions.forEach((position) => {
-            if (req.user.positionsAccess.indexOf(position) === -1) {
-                res.send(403).end;
-                return;
-            }
-        });
-    }*/
-
-    let startDate,
-        endDate,
-        positions;
-
     let validator = isVisitsByMonthQueryValid(req.query);
 
     if(!validator.isValid){
         res.status(400).send(validator.message);
         return;
     }
+
+    if (req.user.hasLimitedPositionAccess()) {
+
+        // Question: req.query.positions can be array or string. I am checking it 3 places,
+        // Question: how would you re-organise it?
+        // Question: Can I do here like  req.query.positions = [req.query.positions] ? Should I Do it in middleware?
+        let positions = Array.isArray(req.query.positions) ? req.query.positions : [req.query.positions];
+        positions.forEach((position) => {
+            if (req.user.positionsAccess.indexOf(position) === -1) {
+                res.code(403).send('You don’t have permission to access the stats for position you requested');
+                return;
+            }
+        });
+    }
+
+    let startDate,
+        endDate,
+        positions;
 
     if(req.query.startDate){
         startDate = new Date(req.query.startDate);
@@ -94,6 +98,7 @@ export function visitsByMonth(req, res) {
 
     let aggregateQueryMatch = {};
 
+    // For now positions is required parameter, but we check it anyway
     if(positions){
         aggregateQueryMatch['visits.general._position'] = { $in: positions };
     }
