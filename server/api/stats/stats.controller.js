@@ -10,75 +10,29 @@ function handleError(res, statusCode) {
     };
 }
 
-//TODO: Move this this function to stats.validator.js middleware
-function isVisitsByMonthQueryValid(query){
-    let invalidProps = 0;
+export function isUserHasEnoughRights(req, res, next){
+
+    let hasEnoughRights = true;
     let messages = [];
 
-    // positions
-    if(query.positions){
-        let pattern = new RegExp('^[a-f\\d]{24}$', 'i'); // match 24 symbols hexadecimal string
-        let positionsInvalidMessage = 'The positions parameter is not valid, it should be 24 symbols hexadecimal string.';
-        if(Array.isArray(query.positions)){
-             if(!query.positions.every(position => pattern.test(position))){
-                 invalidProps++;
-                 messages.push(positionsInvalidMessage);
-             }
-        }else{
-             if(!pattern.test(query.positions)){
-                 invalidProps++;
-                 messages.push(positionsInvalidMessage);
-             }
+    // User have permission to access the stats for all requested positions
+    if(req.user && req.user.hasLimitedPositionAccess()){
+        let positions = Array.isArray(req.query.positions) ? req.query.positions : [req.query.positions];
+        if(!positions.every((position) => req.user.positionsAccess.indexOf(position) !== -1)){
+            hasEnoughRights = false;
+            messages.push('You don’t have permission to access the stats for position you requested');
         }
+    }
+
+    if(hasEnoughRights){
+        return next();
     }else{
-        invalidProps++;
-        messages.push('The positions parameter is required, specify at least one');
-    }
-
-    // startDate and endDate
-    let isValidDate = (date) => typeof date === 'string' && /^\d{2}-\d{2}-\d{4}$/.test(date);
-    if(query.startDate){
-        if(!isValidDate(query.startDate)){
-            invalidProps++;
-            messages.push('The startDate parameter is not valid, example of valid value is 01-01-2001.');
-        }
-    }
-    if(query.endDate){
-        if(!isValidDate(query.endDate)){
-            invalidProps++;
-            messages.push('The endDate parameter is not valid, example of valid value is 01-01-2001.');
-        }
-    }
-
-    return {
-        isValid: invalidProps === 0,
-        message: messages.join(' \n')
-    };
-}
-
-
-export function visitsByMonth(req, res) {
-
-    let validator = isVisitsByMonthQueryValid(req.query);
-
-    if(!validator.isValid){
-        res.status(400).send(validator.message);
+        res.status(403).send(messages.join(' \n'));
         return;
     }
+}
 
-    if (req.user.hasLimitedPositionAccess()) {
-
-        // Question: req.query.positions can be array or string. I am checking it 3 places,
-        // Question: how would you re-organise it?
-        // Question: Can I do here like  req.query.positions = [req.query.positions] ? Should I Do it in middleware?
-        let positions = Array.isArray(req.query.positions) ? req.query.positions : [req.query.positions];
-        positions.forEach((position) => {
-            if (req.user.positionsAccess.indexOf(position) === -1) {
-                res.code(403).send('You don’t have permission to access the stats for position you requested');
-                return;
-            }
-        });
-    }
+export function visitsByMonth(req, res) {
 
     let startDate,
         endDate,
