@@ -16,6 +16,8 @@ function isVisitsByMonthQueryValid(query){
     let invalidProps = 0;
     let messages = [];
 
+    //TODO: update validator, we don't need stats for ALL positions, empty query.positions should be invalid
+    //TODO: check positions if user has access to it
     // positions
     if(query.positions){
         let pattern = new RegExp('^[a-f\\d]{24}$', 'i'); // match 24 symbols hexadecimal string
@@ -57,6 +59,7 @@ function isVisitsByMonthQueryValid(query){
 
 export function visitsByMonth(req, res) {
 
+    //TODO: move it to validator
     /*if (req.user.hasLimitedPositionAccess()) {
         positions.forEach((position) => {
             if (req.user.positionsAccess.indexOf(position) === -1) {
