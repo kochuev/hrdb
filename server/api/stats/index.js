@@ -1,9 +1,10 @@
 'use strict';
 
 import {Router} from 'express';
-import * as controller from './stats.controller';
-import * as auth from '../../auth/auth.service';
-import * as validator from './stats.validator';
+import * as statsController from './stats.controller';
+import * as authService from '../../auth/auth.service';
+import * as statsValidator from './stats.validator';
+import * as userMiddleware from '../../middlewares/user.middlewares';
 
 var router = new Router();
 
@@ -22,17 +23,17 @@ var router = new Router();
  */
 router.get(
     '/visits-by-month/',
-    auth.isAuthenticated(),
-    validator.isVisitsQueryValid,
-    controller.isUserGranted,
-    controller.visitsByMonth
+    authService.isAuthenticated(),
+    statsValidator.isVisitsQueryValid,
+    userMiddleware.isGrantedForRequestedData,
+    statsController.visitsByMonth
 );
 router.get(
     '/visits-by-:group(agency|position|origin)/',
-    auth.isAuthenticated(),
-    validator.isVisitsQueryValid,
-    controller.isUserGranted,
-    controller.visitsByGroup
+    authService.isAuthenticated(),
+    statsValidator.isVisitsQueryValid,
+    userMiddleware.isGrantedForRequestedData,
+    statsController.visitsByGroup
 );
 
 module.exports = router;

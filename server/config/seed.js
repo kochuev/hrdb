@@ -84,12 +84,7 @@ let seedCandidates = function(){
         Position.find({}),
         Origin.find({})
     ])
-        .then((values) => {
-            // TODO: refactor it
-            // Question: Is there better way then rely on order and indexes?
-            let agencies = values[0];
-            let positions = values[1];
-            let origins = values[2];
+        .then(([agencies, positions, origins]) => {
 
             dates.forEach(date => {
                 agencies.forEach(agency => {
