@@ -34,7 +34,7 @@ module.exports = function(config) {
       'client/bower_components/angular-chart.js/dist/angular-chart.js',
       'client/bower_components/angular-mocks/angular-mocks.js',
       // endbower
-      'node_modules/socket.io-client/socket.io.js',
+      'node_modules/socket.io-client/dist/socket.io.js',
       'client/app/app.js',
       'client/{app,components}/**/*.module.js',
       'client/{app,components}/**/*.js',
@@ -95,7 +95,7 @@ module.exports = function(config) {
     // - Safari (only Mac)
     // - PhantomJS
     // - IE (only Windows)
-    browsers: ['PhantomJS'],
+    browsers: ['Chrome'],
 
     // Continuous Integration mode
     // if true, it capture browsers, run tests and exit
