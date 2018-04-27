@@ -55,8 +55,6 @@ let seedCollection = function (Collection, items){
 
 let seedCandidates = function(){
 
-    //TODO: new Date('01/01/2018') is 2017-12-31 22:00:00.000Z. Set timezone for express ro find other fix
-
     let candidates = [];
     let dates = [
         //Jan
@@ -87,12 +85,12 @@ let seedCandidates = function(){
         Origin.find({})
     ])
         .then((values) => {
-            // TODO: Is there better way then rely on order and indexes?
+            // TODO: refactor it
+            // Question: Is there better way then rely on order and indexes?
             let agencies = values[0];
             let positions = values[1];
             let origins = values[2];
 
-            // TODO: Make sure these nested loops are best solution
             dates.forEach(date => {
                 agencies.forEach(agency => {
                     positions.forEach(position => {
@@ -153,8 +151,8 @@ let seedUsers = function (positionsAccess){
 };
 
 Promise.all([
-    seedCollection(Origin, [{name: 'Test origin'}]),
-    seedCollection(Agency, [{name: 'Test Agency'}]),
+    seedCollection(Origin, [{name: 'Test origin'}, {name: 'Test origin 2 '}]),
+    seedCollection(Agency, [{name: 'Test Agency'}, {name: 'Test Agency 2'}]),
     seedCollection(Position, [{
         'name': 'Symfony developer'
     },{
