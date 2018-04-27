@@ -19,7 +19,7 @@ router.get(
     '/visits-by-month/',
     auth.isAuthenticated(),
     validator.isVisitsQueryValid,
-    controller.isUserHasEnoughRights,
+    controller.isUserGranted,
     controller.visitsByMonth
 );
 // router.get('/visits-by-agency/', /*auth.isAuthenticated(),*/ controller.someFunc);

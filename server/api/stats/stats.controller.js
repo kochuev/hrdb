@@ -10,7 +10,7 @@ function handleError(res, statusCode) {
     };
 }
 
-export function isUserHasEnoughRights(req, res, next){
+export function isUserGranted(req, res, next){
 
     let hasEnoughRights = true;
     let messages = [];
