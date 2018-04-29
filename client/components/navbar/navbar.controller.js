@@ -8,7 +8,7 @@ class NavbarController {
   },
   {
     'title': 'Statistics',
-    'state': 'stats.list'
+    'state': 'stats'
   }];
 
   menuAdmin = [{

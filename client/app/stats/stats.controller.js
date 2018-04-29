@@ -1,32 +1,31 @@
 'use strict';
 
-(function() {
+(function () {
 
-class StatsController {
+    class StatsController {
+        constructor() {
 
-  constructor($http, $stateParams, Modal, positions, agencies, origins, statsByOrigin, statsByAgency, statsByMonth) {
-    this.$http = $http;
-    this.Modal = Modal;
+            this.monthlyChart = {
+                labels: [],
+                data: []
+            };
+            for (let point of this.statsByMonth.data) {
+                this.monthlyChart.labels.push(point.date.toLocaleString(navigator.language, {
+                    month: 'short',
+                    year: '2-digit'
+                }));
+                this.monthlyChart.data.push(point.total);
+            }
 
-    this.statsByOrigin = statsByOrigin.data;
-    this.statsByAgency = statsByAgency.data;
-    this.position = positions[$stateParams.id];
-    this.agencies = agencies;
-    this.origins = origins;
+            this.statsByAgency = this.statsByAgency.data;
+            this.statsByOrigin = this.statsByOrigin.data;
 
-    this.monthlyChart = {
-      labels: [],
-      data: []
-    };
-    for (let point of statsByMonth.data) {
-      this.monthlyChart.labels.push(point.date.toLocaleString(navigator.language, {month: 'short', year: '2-digit'}));
-      this.monthlyChart.data.push(point.total);
+
+        }
+
     }
-  }
 
-}
-
-angular.module('hrDbApp.stats')
-  .controller('StatsController', StatsController);
+    angular.module('hrDbApp.stats')
+        .controller('StatsController', StatsController);
 
 })();

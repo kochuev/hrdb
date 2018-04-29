@@ -1,9 +1,17 @@
 <navbar></navbar>
 
 <div class="container">
-  <h1>{{vm.position.name}}</h1>
+  <h1>Statistic of visits</h1>
+
+  <div class="stat-filters">
+    <stat-positions-filter></stat-positions-filter>
+    <stat-date-filter></stat-date-filter>
+  </div>
+
+  <a ui-sref="stats({startDate: '01-01-2017', endDate: '12-31-2017'})">Last year</a>
+
   <h3>By Month</h3>
-  <canvas id="line" class="chart chart-line" chart-data="vm.monthlyChart.data" chart-labels="vm.monthlyChart.labels"></canvas>
+  <canvas id="line" class="chart chart-line" chart-data="$ctrl.monthlyChart.data" chart-labels="$ctrl.monthlyChart.labels"></canvas>
 
   <h3>By Agency</h3>
   <table class="table table-hover">
@@ -15,8 +23,8 @@
       <th>Hire Ratio</th>
       <th>Total Candidates</th>
     </tr>
-    <tr ng-repeat="stat in vm.statsByAgency" ng-class="{'danger': stat.proposal == 0 && stat.hire == 0}">
-      <td>{{stat._id.agency ? vm.agencies[stat._id.agency].name : "No Agency"}}</td>
+    <tr ng-repeat="stat in $ctrl.statsByAgency" ng-class="{'danger': stat.proposal == 0 && stat.hire == 0}">
+      <td>{{stat._id.agency ? $ctrl.agencies[stat._id.agency].name : "No Agency"}}</td>
       <td>{{stat.skype/stat.total*100 | number:2}}%</td>
       <td>{{stat.office/stat.total*100 | number:2}}%</td>
       <td>{{stat.proposal/stat.total*100 | number:2}}%</td>
@@ -35,8 +43,8 @@
       <th>Hire Ratio</th>
       <th>Total Candidates</th>
     </tr>
-    <tr ng-repeat="stat in vm.statsByOrigin" ng-class="{'danger': stat.proposal == 0 && stat.hire == 0}">
-      <td>{{stat._id.origin ? vm.origins[stat._id.origin].name : "No Origin"}}</td>
+    <tr ng-repeat="stat in $ctrl.statsByOrigin" ng-class="{'danger': stat.proposal == 0 && stat.hire == 0}">
+      <td>{{stat._id.origin ? $ctrl.origins[stat._id.origin].name : "No Origin"}}</td>
       <td>{{stat.skype/stat.total*100 | number:2}}%</td>
       <td>{{stat.office/stat.total*100 | number:2}}%</td>
       <td>{{stat.proposal/stat.total*100 | number:2}}%</td>
