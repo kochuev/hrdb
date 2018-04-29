@@ -12,7 +12,7 @@ module.exports = {
   },
 
   // Seed database on startup
-  seedDB: true,
+  seedDB: false,
 
   calendar: {
     id: '7d16iecqpht25h0cnk8ol17cv0@group.calendar.google.com',
