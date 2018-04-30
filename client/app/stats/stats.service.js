@@ -10,7 +10,28 @@
 
         //TODO: implement this method
         _composeQueryString($stateParams){
-            return '?startDate=01-01-2001&positions=5ae5c885d72d006ee2cbed3c';
+
+            let queryStringParts = [];
+
+            if($stateParams.startDate){
+                queryStringParts.push('startDate=' + $stateParams.startDate);
+            }
+
+            if($stateParams.endDate){
+                queryStringParts.push('endDate=' + $stateParams.endDate);
+            }
+
+            if($stateParams.positions){
+                $stateParams
+                    .positions.split(',')
+                    .map(position => 'positions' + position)
+                    .forEach(queryStringPart => {
+                        queryStringParts.push(queryStringPart);
+                    });
+            }
+            console.log(queryStringParts.length ? '?' + queryStringParts.join('&') : '');
+
+            return queryStringParts.length ? '?' + queryStringParts.join('&') : '';
         }
 
         getStatsByMonth($stateParams){

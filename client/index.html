@@ -26,6 +26,7 @@
       <link rel="stylesheet" href="app/candidate/candidate.css">
       <link rel="stylesheet" href="app/entity/entity.css">
       <link rel="stylesheet" href="app/main/main.css">
+      <link rel="stylesheet" href="app/stats/stats-month/stats-month.css">
       <link rel="stylesheet" href="app/stats/stats.css">
       <link rel="stylesheet" href="components/footer/footer.css">
       <link rel="stylesheet" href="components/modal/modal.css">
@@ -83,12 +84,12 @@
     <!-- build:js(.tmp) app/app.js -->
       <script src="app/app.js"></script>
       <!-- injector:js -->
+      <script src="components/auth/auth.module.js"></script>
       <script src="app/admin/admin.module.js"></script>
       <script src="app/stats/stats.module.js"></script>
-      <script src="components/auth/auth.module.js"></script>
       <script src="components/metaphone/metaphone.module.js"></script>
       <script src="components/util/util.module.js"></script>
-      <script src="components/auth/auth.service.js"></script>
+      <script src="app/account/account.js"></script>
       <script src="app/admin/admin.router.js"></script>
       <script src="app/admin/user.details.controller.js"></script>
       <script src="app/app.constant.js"></script>
@@ -99,12 +100,15 @@
       <script src="app/entity/entity.js"></script>
       <script src="app/main/main.controller.js"></script>
       <script src="app/main/main.js"></script>
+      <script src="app/stats/stats-agency/stats-agency.component.js"></script>
+      <script src="app/stats/stats-month/stats-month.component.js"></script>
+      <script src="app/stats/stats-origin/stats-origin.component.js"></script>
       <script src="app/stats/stats.component.js"></script>
       <script src="app/stats/stats.controller.js"></script>
       <script src="app/account/settings/settings.controller.js"></script>
       <script src="app/stats/stats.service.js"></script>
-      <script src="app/account/signup/signup.controller.js"></script>
       <script src="app/account/login/login.controller.js"></script>
+      <script src="components/auth/auth.service.js"></script>
       <script src="components/auth/interceptor.service.js"></script>
       <script src="components/auth/router.decorator.js"></script>
       <script src="components/auth/user.service.js"></script>
@@ -112,7 +116,7 @@
       <script src="components/entity/entity.service.js"></script>
       <script src="components/footer/footer.directive.js"></script>
       <script src="components/interviewStatus/interviewStatus.directive.js"></script>
-      <script src="app/admin/admin.controller.js"></script>
+      <script src="app/account/signup/signup.controller.js"></script>
       <script src="components/metaphone/metaphone.service.js"></script>
       <script src="components/metaphone/translit.service.js"></script>
       <script src="components/modal/modal.service.js"></script>
@@ -121,7 +125,7 @@
       <script src="components/navbar/navbar.directive.js"></script>
       <script src="components/search/search.service.js"></script>
       <script src="components/socket/socket.service.js"></script>
-      <script src="app/account/account.js"></script>
+      <script src="app/admin/admin.controller.js"></script>
       <script src="components/util/util.service.js"></script>
       <script src="components/visit/visit.controller.js"></script>
       <script src="components/visit/visit.directive.js"></script>

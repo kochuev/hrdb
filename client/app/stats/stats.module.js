@@ -16,7 +16,7 @@ angular
                 //Fixme: make this string work
                 // authenticate: 'user',
                 resolve: {
-                    'positions': (Entity, $stateParams) => Entity.getPositions(),
+                    'positions': (Entity) => Entity.getPositions(),
                     'agencies': (Entity) => Entity.getAgencies(),
                     'origins': (Entity) => Entity.getOrigins(),
                     'statsByMonth': (StatsService, $stateParams) => StatsService.getStatsByMonth($stateParams),
