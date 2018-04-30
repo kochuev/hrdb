@@ -24,7 +24,7 @@
             if($stateParams.positions){
                 $stateParams
                     .positions.split(',')
-                    .map(position => 'positions' + position)
+                    .map(position => 'positions=' + position)
                     .forEach(queryStringPart => {
                         queryStringParts.push(queryStringPart);
                     });
