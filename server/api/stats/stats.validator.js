@@ -19,9 +19,6 @@ export function isVisitsQueryValid(req, res, next){
                 messages.push(positionsInvalidMessage);
             }
         }
-    }else{
-        invalidProps++;
-        messages.push('The positions parameter is required, specify at least one');
     }
 
     // startDate and endDate

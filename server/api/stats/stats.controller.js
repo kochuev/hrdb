@@ -153,8 +153,9 @@ function getAggregateQueryMatch(req){
 
     if(req.query.positions){
         positions = Array.isArray(req.query.positions) ? req.query.positions : [req.query.positions];
+    }else if(req.user.hasLimitedPositionAccess()){
+        positions = req.user.positionsAccess;
     }
-
 
     // For now positions is required parameter, but we check it anyway
     if(positions){

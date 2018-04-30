@@ -16,7 +16,7 @@ var router = new Router();
  *
  * startDate: optional, format: 01-20-2001
  * endDate: optional, format: 02-20-2001
- * positions: required, one or more can be passed, format: 5ae0a2431a426c3b81920441
+ * positions: optional, zero, one or more can be passed, format: 5ae0a2431a426c3b81920441
  *
  * URL example: http://localhost:9000/api/stats/visits-by-month/?startDate=01-20-2017&endDate=04-03-2018&positions=5ae0a2431a426c3b81920441&positions=5ae0a2431a426c3b81920442
  *
