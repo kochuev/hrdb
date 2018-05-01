@@ -1,17 +1,17 @@
 'use strict';
 
-(function () {
+(function() {
 
-    const StatsAgencyComponent = {
-        bindings: {
-            statsByAgency: '<',
-            agencies: '<'
-        },
-        templateUrl: 'app/stats/stats-agency/stats-agency.html'
-    };
+  const StatsAgencyComponent = {
+    bindings: {
+      statsByAgency: '<',
+      agencies: '<'
+    },
+    templateUrl: 'app/stats/stats-agency/stats-agency.html'
+  };
 
-    angular
-        .module('hrDbApp.stats')
-        .component('statsAgency', StatsAgencyComponent);
+  angular
+      .module('hrDbApp.stats')
+      .component('statsAgency', StatsAgencyComponent);
 
 })();

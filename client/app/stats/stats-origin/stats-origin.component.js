@@ -1,17 +1,17 @@
 'use strict';
 
-(function () {
+(function() {
 
-    const StatsOriginComponent = {
-        bindings: {
-            statsByOrigin: '<',
-            origins: '<'
-        },
-        templateUrl: 'app/stats/stats-origin/stats-origin.html'
-    };
+  const StatsOriginComponent = {
+    bindings: {
+      statsByOrigin: '<',
+      origins: '<'
+    },
+    templateUrl: 'app/stats/stats-origin/stats-origin.html'
+  };
 
-    angular
-        .module('hrDbApp.stats')
-        .component('statsOrigin', StatsOriginComponent);
+  angular
+      .module('hrDbApp.stats')
+      .component('statsOrigin', StatsOriginComponent);
 
 })();

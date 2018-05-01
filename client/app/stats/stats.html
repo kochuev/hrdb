@@ -1,25 +1,25 @@
 <navbar></navbar>
 
 <div class="container">
-    <h1>Statistic of visits</h1>
+  <h1>Statistic of visits</h1>
 
-    <!--TODO: implement filtering components-->
-    <div class="stats-filters">
-        <stats-filter-by-position></stats-filter-by-position>
-        <stats-filter-by-date></stats-filter-by-date>
-    </div>
+  <!--TODO: implement filtering components-->
+  <div class="stats-filters">
+    <stats-filter-by-position></stats-filter-by-position>
+    <stats-filter-by-date></stats-filter-by-date>
+  </div>
 
-    <!--TODO: Remove temp links-->
-    <a ui-sref="stats({startDate: '01-01-2018', endDate: '01-31-2018'})">Jan</a> <br>
-    <a ui-sref="stats({startDate: '01-01-2018', endDate: '02-31-2018'})">Jan and Feb</a> <br>
-    <a ui-sref="stats({startDate: '01-01-2018', endDate: '12-31-2018'})">2018</a> <br>
-    <a ui-sref="stats({startDate: null, endDate: null})">Anytime</a>
+  <!--TODO: Remove temp links-->
+  <a ui-sref="stats({startDate: '01-01-2018', endDate: '01-31-2018'})">Jan</a> <br>
+  <a ui-sref="stats({startDate: '01-01-2018', endDate: '02-31-2018'})">Jan and Feb</a> <br>
+  <a ui-sref="stats({startDate: '01-01-2018', endDate: '12-31-2018'})">2018</a> <br>
+  <a ui-sref="stats({startDate: null, endDate: null})">Anytime</a>
 
-    <stats-month monthly-chart="$ctrl.monthlyChart"></stats-month>
+  <stats-month monthly-chart="$ctrl.monthlyChart"></stats-month>
 
-    <stats-agency stats-by-agency="$ctrl.statsByAgency" agencies="$ctrl.agencies"></stats-agency>
+  <stats-agency stats-by-agency="$ctrl.statsByAgency" agencies="$ctrl.agencies"></stats-agency>
 
-    <stats-origin stats-by-origin="$ctrl.statsByOrigin" origins="$ctrl.origins"></stats-origin>
+  <stats-origin stats-by-origin="$ctrl.statsByOrigin" origins="$ctrl.origins"></stats-origin>
 
 </div>
 
