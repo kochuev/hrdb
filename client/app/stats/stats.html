@@ -13,7 +13,18 @@
   <a ui-sref="stats({startDate: '01-01-2018', endDate: '01-31-2018'})">Jan</a> <br>
   <a ui-sref="stats({startDate: '01-01-2018', endDate: '02-31-2018'})">Jan and Feb</a> <br>
   <a ui-sref="stats({startDate: '01-01-2018', endDate: '12-31-2018'})">2018</a> <br>
-  <a ui-sref="stats({startDate: null, endDate: null})">Anytime</a>
+  <a ui-sref="stats({startDate: null, endDate: null, positions: null})">Anytime</a> <br>
+  <a ui-sref="stats({startDate: null, endDate: null, positions: ['5ae3303d910b30df4882b11a']})">
+    Anytime and one position
+  </a>
+  <br>
+  <a ui-sref="stats({startDate: null, endDate: null, positions: ['5ae3303d910b30df4882b11a', '5ae3303d910b30df4882b11b']})">
+    Anytime and two positions
+  </a>
+  <br>
+  <a ui-sref="stats({startDate: '01-01-2018', endDate: '12-31-2018', positions: ['5ae3303d910b30df4882b11a', '5ae3303d910b30df4882b11b']})">
+    2018 and two positions
+  </a>
 
   <stats-month monthly-chart="$ctrl.monthlyChart"></stats-month>
 

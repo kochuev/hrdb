@@ -11,6 +11,17 @@ angular
       $stateProvider.state({
         name: 'stats',
         url: '/stats?startDate&endDate&positions',
+        params: {
+          positions: {
+            array: true
+          },
+          startDate: {
+            array: false
+          },
+          endDate: {
+            array: false
+          }
+        },
         component: 'stats',
         //Fixme: make this string work
         // authenticate: 'user',

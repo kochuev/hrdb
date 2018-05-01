@@ -8,7 +8,22 @@
       this.$http = $http;
     }
 
-    //TODO: implement this method
+    getStatsByMonth($stateParams) {
+      return this.$http.get('/api/stats/visits-by-month/'
+          + this._composeQueryString($stateParams));
+    }
+
+    getStatsByAgency($stateParams) {
+      return this.$http.get('/api/stats/visits-by-agency/'
+          + this._composeQueryString($stateParams));
+    }
+
+    getStatsByOrigin($stateParams) {
+      return this.$http.get('/api/stats/visits-by-origin/'
+          + this._composeQueryString($stateParams));
+    }
+
+    //TODO: refactor this method
     _composeQueryString($stateParams) {
 
       let queryStringParts = [];
@@ -22,28 +37,14 @@
       }
 
       if ($stateParams.positions) {
-        $stateParams
-            .positions.split(',')
-            .map(position => 'positions=' + position)
+        $stateParams.positions
+            .map(position => 'positions[]=' + position)
             .forEach(queryStringPart => {
               queryStringParts.push(queryStringPart);
             });
       }
-      console.log(queryStringParts.length ? '?' + queryStringParts.join('&') : '');
 
       return queryStringParts.length ? '?' + queryStringParts.join('&') : '';
-    }
-
-    getStatsByMonth($stateParams) {
-      return this.$http.get('/api/stats/visits-by-month/' + this._composeQueryString($stateParams));
-    }
-
-    getStatsByAgency($stateParams) {
-      return this.$http.get('/api/stats/visits-by-agency/' + this._composeQueryString($stateParams));
-    }
-
-    getStatsByOrigin($stateParams) {
-      return this.$http.get('/api/stats/visits-by-origin/' + this._composeQueryString($stateParams));
     }
   };
 
@@ -52,5 +53,3 @@
       .service('StatsService', StatsService);
 
 })();
-
-
