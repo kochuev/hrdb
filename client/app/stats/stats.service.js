@@ -8,39 +8,38 @@
       this.$http = $http;
     }
 
-    getStatsByMonth($stateParams) {
+    getStatsByMonth(params) {
       return this.$http.get('/api/stats/visits-by-month/'
-          + this._composeQueryString($stateParams));
+          + this._composeQueryString(params));
     }
 
-    getStatsByAgency($stateParams) {
+    getStatsByAgency(params) {
       return this.$http.get('/api/stats/visits-by-agency/'
-          + this._composeQueryString($stateParams));
+          + this._composeQueryString(params));
     }
 
-    getStatsByOrigin($stateParams) {
+    getStatsByOrigin(params) {
       return this.$http.get('/api/stats/visits-by-origin/'
-          + this._composeQueryString($stateParams));
+          + this._composeQueryString(params));
     }
 
-    //TODO: refactor this method
-    _composeQueryString($stateParams) {
+    _composeQueryString(params) {
 
       let queryStringParts = [];
 
-      if ($stateParams.startDate) {
-        queryStringParts.push('startDate=' + $stateParams.startDate);
+      if (params.startDate) {
+        queryStringParts.push('startDate=' + params.startDate);
       }
 
-      if ($stateParams.endDate) {
-        queryStringParts.push('endDate=' + $stateParams.endDate);
+      if (params.endDate) {
+        queryStringParts.push('endDate=' + params.endDate);
       }
 
-      if ($stateParams.positions) {
-        $stateParams.positions
+      if (params.positions) {
+        params.positions
             .map(position => 'positions[]=' + position)
-            .forEach(queryStringPart => {
-              queryStringParts.push(queryStringPart);
+            .forEach(param => {
+              queryStringParts.push(param);
             });
       }
 

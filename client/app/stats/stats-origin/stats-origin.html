@@ -1,19 +1,26 @@
 <h3>By Origin</h3>
-<table class="table table-hover">
-  <tr>
-    <th>Origin</th>
-    <th>CV Review Pass Ratio</th>
-    <th>First Round Pass Ratio</th>
-    <th>Second Round Pass Ratio</th>
-    <th>Hire Ratio</th>
-    <th>Total Candidates</th>
-  </tr>
-  <tr ng-repeat="stat in $ctrl.statsByOrigin" ng-class="{'danger': stat.proposal == 0 && stat.hire == 0}">
-    <td>{{stat._id.origin ? $ctrl.origins[stat._id.origin].name : "No Origin"}}</td>
-    <td>{{stat.skype/stat.total*100 | number:2}}%</td>
-    <td>{{stat.office/stat.total*100 | number:2}}%</td>
-    <td>{{stat.proposal/stat.total*100 | number:2}}%</td>
-    <td>{{stat.hire/stat.total*100 | number:2}}%</td>
-    <td>{{stat.total}} persons</td>
-  </tr>
-</table>
+
+<div ng-if="$ctrl.statsByOrigin && $ctrl.statsByOrigin.length">
+  <table class="table table-hover">
+    <tr>
+      <th>Origin</th>
+      <th>CV Review Pass Ratio</th>
+      <th>First Round Pass Ratio</th>
+      <th>Second Round Pass Ratio</th>
+      <th>Hire Ratio</th>
+      <th>Total Candidates</th>
+    </tr>
+    <tr ng-repeat="stat in $ctrl.statsByOrigin" ng-class="{'danger': stat.proposal == 0 && stat.hire == 0}">
+      <td>{{stat._id.origin ? $ctrl.origins[stat._id.origin].name : "No Origin"}}</td>
+      <td>{{stat.skype/stat.total*100 | number:2}}%</td>
+      <td>{{stat.office/stat.total*100 | number:2}}%</td>
+      <td>{{stat.proposal/stat.total*100 | number:2}}%</td>
+      <td>{{stat.hire/stat.total*100 | number:2}}%</td>
+      <td>{{stat.total}} persons</td>
+    </tr>
+  </table>
+</div>
+
+<div ng-if="!$ctrl.statsByOrigin || !$ctrl.statsByOrigin.length">
+  There is no data available
+</div>

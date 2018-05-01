@@ -1,19 +1,26 @@
 <h3>By Agency</h3>
-<table class="table table-hover">
-  <tr>
-    <th>Agency</th>
-    <th>CV Review Pass Ratio</th>
-    <th>First Round Pass Ratio</th>
-    <th>Offer Ratio</th>
-    <th>Hire Ratio</th>
-    <th>Total Candidates</th>
-  </tr>
-  <tr ng-repeat="stat in $ctrl.statsByAgency" ng-class="{'danger': stat.proposal == 0 && stat.hire == 0}">
-    <td>{{stat._id.agency ? $ctrl.agencies[stat._id.agency].name : "No Agency"}}</td>
-    <td>{{stat.skype/stat.total*100 | number:2}}%</td>
-    <td>{{stat.office/stat.total*100 | number:2}}%</td>
-    <td>{{stat.proposal/stat.total*100 | number:2}}%</td>
-    <td>{{stat.hire/stat.total*100 | number:2}}%</td>
-    <td>{{stat.total}} persons</td>
-  </tr>
-</table>
+
+<div ng-if="$ctrl.statsByAgency && $ctrl.statsByAgency.length">
+  <table class="table table-hover">
+    <tr>
+      <th>Agency</th>
+      <th>CV Review Pass Ratio</th>
+      <th>First Round Pass Ratio</th>
+      <th>Offer Ratio</th>
+      <th>Hire Ratio</th>
+      <th>Total Candidates</th>
+    </tr>
+    <tr ng-repeat="stat in $ctrl.statsByAgency" ng-class="{'danger': stat.proposal == 0 && stat.hire == 0}">
+      <td>{{stat._id.agency ? $ctrl.agencies[stat._id.agency].name : "No Agency"}}</td>
+      <td>{{stat.skype/stat.total*100 | number:2}}%</td>
+      <td>{{stat.office/stat.total*100 | number:2}}%</td>
+      <td>{{stat.proposal/stat.total*100 | number:2}}%</td>
+      <td>{{stat.hire/stat.total*100 | number:2}}%</td>
+      <td>{{stat.total}} persons</td>
+    </tr>
+  </table>
+</div>
+
+<div ng-if="!$ctrl.statsByAgency || !$ctrl.statsByAgency.length">
+  There is no data available
+</div>

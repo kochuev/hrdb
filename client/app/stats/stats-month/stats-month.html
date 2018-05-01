@@ -1,2 +1,10 @@
 <h3>By Month</h3>
-<canvas class="chart chart-line" chart-data="$ctrl.monthlyChart.data" chart-labels="$ctrl.monthlyChart.labels"></canvas>
+
+<div ng-if="$ctrl.monthlyChart && $ctrl.monthlyChart.data && $ctrl.monthlyChart.data.length">
+  <canvas class="chart chart-line" chart-data="$ctrl.monthlyChart.data"
+          chart-labels="$ctrl.monthlyChart.labels"></canvas>
+</div>
+
+<div ng-if="!$ctrl.monthlyChart || !$ctrl.monthlyChart.data || !$ctrl.monthlyChart.data.length">
+  There is no data available
+</div>

@@ -10,28 +10,14 @@ angular
     .config(function ($stateProvider) {
       $stateProvider.state({
         name: 'stats',
-        url: '/stats?startDate&endDate&positions',
-        params: {
-          positions: {
-            array: true
-          },
-          startDate: {
-            array: false
-          },
-          endDate: {
-            array: false
-          }
-        },
+        url: '/stats',
         component: 'stats',
-        //Fixme: make this string work
+        //Fixme: make this string work, there is no docs for this 'authenticate'
         // authenticate: 'user',
         resolve: {
           'positions': (Entity) => Entity.getPositions(),
           'agencies': (Entity) => Entity.getAgencies(),
-          'origins': (Entity) => Entity.getOrigins(),
-          'statsByMonth': (StatsService, $stateParams) => StatsService.getStatsByMonth($stateParams),
-          'statsByAgency': (StatsService, $stateParams) => StatsService.getStatsByAgency($stateParams),
-          'statsByOrigin': (StatsService, $stateParams) => StatsService.getStatsByOrigin($stateParams)
+          'origins': (Entity) => Entity.getOrigins()
         }
       })
     });

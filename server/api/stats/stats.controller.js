@@ -37,7 +37,7 @@ export function visitsByMonth(req, res) {
       .then(stats => {
 
         if (stats.length === 0) {
-          res.status(404).send('Looks like there are no visits matching you request');
+          res.status(200).json([])
           return;
         }
 
