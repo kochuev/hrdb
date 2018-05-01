@@ -26,13 +26,13 @@ angular
           this.updateStats();
         }
 
-        updateStatsWithNewDates(event) {
+        handleDatesChanged(event) {
           this.startDate = event.startDate;
           this.endDate = event.endDate;
           this.updateStats();
         }
 
-        updateStatsWithNewPositions(event) {
+        handlePositionChanged(event) {
           this.positions = event.positions;
           this.updateStats();
         }
