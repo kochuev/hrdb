@@ -5,3 +5,7 @@ h3 {
 .stats-filters {
   margin: 20px 0 10px;
 }
+
+.stats-filters .filters-title{
+  margin: 5px 0;
+}

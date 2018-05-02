@@ -6,7 +6,8 @@ angular
       'hrDbApp.auth',
       'ui.router',
       'chart.js',
-      'ui.select'
+      'ui.select',
+      'daterangepicker'
     ])
     .config(function ($stateProvider) {
       $stateProvider.state({

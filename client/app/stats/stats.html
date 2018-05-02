@@ -2,22 +2,28 @@
 
 <div class="container">
 
-  <h1>Statistic of visits</h1>
+  <h1>Visits statistic</h1>
 
   <div class="stats-filters">
-
-    <stats-position-filter
-            selected-positions-ids="$ctrl.selectedPositionsIds"
-            positions-available="$ctrl.positionsAllowedToUser"
-            on-positions-selection-change="$ctrl.updateStatsWithNewPositions($event)"
-    ></stats-position-filter>
-
-    <stats-date-filter
-            start-date="$ctrl.startDateParam"
-            end-date="$ctrl.endDateParam"
-            on-dates-changed="$ctrl.updateStatsWithNewDates($event)"
-    ></stats-date-filter>
-
+    <div class="row">
+      <div class="col-sm-3 col-sm-offset-3">
+        <p class="filters-title text-right"><i class="fa fa-filter"></i> Filters:</p>
+      </div>
+      <div class="col-sm-3">
+        <stats-position-filter
+                selected-positions-ids="$ctrl.selectedPositionsIds"
+                positions-available="$ctrl.positionsAllowedToUser"
+                on-positions-selection-change="$ctrl.updateStatsWithNewPositions($event)"
+        ></stats-position-filter>
+      </div>
+      <div class="col-sm-3">
+        <stats-date-filter
+                start-date="$ctrl.startDateParam"
+                end-date="$ctrl.endDateParam"
+                on-dates-changed="$ctrl.updateStatsWithNewDates($event)"
+        ></stats-date-filter>
+      </div>
+    </div>
   </div>
 
   <stats-month monthly-chart="$ctrl.monthlyChart"></stats-month>

@@ -19,7 +19,7 @@ angular
           this.statsByAgency = undefined;
           this.statsByOrigin = undefined;
           this.startDateParam = undefined;
-          this.endDateParam = '05-15-2018';
+          this.endDateParam = undefined;
           this.selectedPositionsIds = [];
           this.positionsAllowedToUser = this.filterPositionsWithUserRights(this.positions);
 
@@ -42,8 +42,8 @@ angular
 
         updateStats() {
           const params = {
-            startDate: this.startDateParam,
-            endDate: this.endDateParam,
+            startDate: this.startDateParam && moment(this.startDateParam).format('MM-DD-YYYY'),
+            endDate: this.endDateParam && moment(this.endDateParam).format('MM-DD-YYYY'),
             positions: this.selectedPositionsIds
           };
 

@@ -1,0 +1,11 @@
+stats-position-filter .ui-select-multiple.ui-select-bootstrap input.ui-select-search{
+  line-height: 20;
+  padding: 4px 12px;
+  height: 27px;
+  font-size: 14px;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: 400;
+}
+stats-position-filter .ui-select-multiple.ui-select-bootstrap input.ui-select-search::placeholder{
+  color: #999;
+}
