@@ -6,7 +6,7 @@
   <!--TODO: implement filtering components-->
   <div class="stats-filters">
     <!--<stats-filter-by-position></stats-filter-by-position>-->
-    <stats-date-filter start-date="$ctrl.startDate" end-date="$ctrl.endDate" on-dates-changed="$ctrl.handleDatesChanged($event)"></stats-date-filter>
+    <stats-date-filter start-date="$ctrl.startDate" end-date="$ctrl.endDate" on-dates-changed="$ctrl.updateStatsWithNewDates($event)"></stats-date-filter>
   </div>
 
   <stats-month monthly-chart="$ctrl.monthlyChart"></stats-month>

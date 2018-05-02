@@ -13,35 +13,36 @@ angular
         constructor(StatsService) {
           'ngInject';
           this.StatsService = StatsService;
-        }
 
-        $onInit() {
-          // Question: Does it make sense to define first 4?
           this.monthlyChart = undefined;
           this.statsByAgency = undefined;
           this.statsByOrigin = undefined;
-          this.startDate = undefined;
-          this.endDate = '05-15-2018';
-          this.positions = [];
+          this.startDateParam = undefined;
+          this.endDateParam = '05-15-2018';
+          this.positionsParam = [];
+
+        }
+
+        $onInit() {
           this.updateStats();
         }
 
-        handleDatesChanged(event) {
-          this.startDate = event.startDate;
-          this.endDate = event.endDate;
+        updateStatsWithNewDates(event) {
+          this.startDateParam = event.startDate;
+          this.endDateParam = event.endDate;
           this.updateStats();
         }
 
-        handlePositionChanged(event) {
-          this.positions = event.positions;
+        updateStatsWithNewPositions(event) {
+          this.positionsParam = event.positions;
           this.updateStats();
         }
 
         updateStats() {
           const params = {
-            startDate: this.startDate,
-            endDate: this.endDate,
-            positions: this.positions
+            startDate: this.startDateParam,
+            endDate: this.endDateParam,
+            positions: this.positionsParam
           };
 
           this.updateStatsByMonth(params);
