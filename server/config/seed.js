@@ -45,7 +45,7 @@ Thing.find({}).removeAsync()
     });
 
 
-let seedCollection = function(Collection, items) {
+let seedCollection = function (Collection, items) {
 
   return Collection.find({})
       .remove()
@@ -53,7 +53,7 @@ let seedCollection = function(Collection, items) {
 
 };
 
-let seedCandidates = function() {
+let seedCandidates = function () {
 
   let candidates = [];
   let dates = [
@@ -117,7 +117,7 @@ let seedCandidates = function() {
 
 };
 
-let seedUsers = function(positionsAccess) {
+let seedUsers = function (positionsAccess) {
 
   return User.find({}).remove()
       .then(() => Position.findOne({name: 'Angular developer'}))
@@ -152,11 +152,11 @@ Promise.all([
     'name': 'Symfony developer'
   }, {
     'name': 'Angular developer'
-  }/*,{
-        'name': 'React developer'
-    },{
-        'name': 'IT recruiter'
-    }*/])
+  }, {
+    'name': 'React developer'
+  }, {
+    'name': 'IT recruiter'
+  }])
 ])
     .then(() => seedCandidates())
     .then(() => seedUsers())
