@@ -1,12 +1,23 @@
 <navbar></navbar>
 
 <div class="container">
+
   <h1>Statistic of visits</h1>
 
-  <!--TODO: implement filtering components-->
   <div class="stats-filters">
-    <!--<stats-filter-by-position></stats-filter-by-position>-->
-    <stats-date-filter start-date="$ctrl.startDateParam" end-date="$ctrl.endDateParam" on-dates-changed="$ctrl.updateStatsWithNewDates($event)"></stats-date-filter>
+
+    <stats-position-filter
+            selected-positions-ids="$ctrl.selectedPositionsIds"
+            positions-available="$ctrl.positionsAllowedToUser"
+            on-positions-selection-change="$ctrl.updateStatsWithNewPositions($event)"
+    ></stats-position-filter>
+
+    <stats-date-filter
+            start-date="$ctrl.startDateParam"
+            end-date="$ctrl.endDateParam"
+            on-dates-changed="$ctrl.updateStatsWithNewDates($event)"
+    ></stats-date-filter>
+
   </div>
 
   <stats-month monthly-chart="$ctrl.monthlyChart"></stats-month>

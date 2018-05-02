@@ -10,16 +10,18 @@ angular
       },
       templateUrl: 'app/stats/stats.html',
       controller: class StatsComponent {
-        constructor(StatsService) {
+        constructor(StatsService, Auth) {
           'ngInject';
           this.StatsService = StatsService;
+          this.Auth = Auth;
 
           this.monthlyChart = undefined;
           this.statsByAgency = undefined;
           this.statsByOrigin = undefined;
           this.startDateParam = undefined;
           this.endDateParam = '05-15-2018';
-          this.positionsParam = [];
+          this.selectedPositionsIds = [];
+          this.positionsAllowedToUser = this.filterPositionsWithUserRights(this.positions);
 
         }
 
@@ -34,7 +36,7 @@ angular
         }
 
         updateStatsWithNewPositions(event) {
-          this.positionsParam = event.positions;
+          this.selectedPositionsIds = event.selectedPositionsIds;
           this.updateStats();
         }
 
@@ -42,7 +44,7 @@ angular
           const params = {
             startDate: this.startDateParam,
             endDate: this.endDateParam,
-            positions: this.positionsParam
+            positions: this.selectedPositionsIds
           };
 
           this.updateStatsByMonth(params);
@@ -101,10 +103,29 @@ angular
           }
         }
 
-        resetStatsData(){
+        resetStatsData() {
           this.monthlyChart = undefined;
           this.statsByAgency = undefined;
           this.statsByOrigin = undefined;
+        }
+
+        filterPositionsWithUserRights(positions) {
+
+          let filtredPositions = [];
+          const positionsAccess = this.Auth.getCurrentUser().positionsAccess;
+
+          if (this.Auth.hasRole("admin") || positionsAccess === undefined || positionsAccess.length === 0) {
+            filtredPositions = positions;
+          } else {
+            for (let pos of positionsAccess) {
+              if (positions[pos] !== undefined) {
+                filtredPositions.push(positions[pos]);
+              }
+            }
+          }
+
+          return filtredPositions;
+
         }
 
       }

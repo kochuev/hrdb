@@ -1,0 +1,19 @@
+<form name="statsPositionFilterForm" >
+
+  <ui-select
+          multiple
+          ng-model="$ctrl.selectedPositionsIds"
+          on-select="$ctrl.onChange()"
+          on-remove="$ctrl.onChange()"
+          theme="bootstrap"
+          close-on-select="true"
+          title="Select positions">
+    <ui-select-match placeholder="Select positions...">
+      {{$ctrl.positionsAvailable[$item].name}}
+    </ui-select-match>
+    <ui-select-choices repeat="id in $ctrl.positionsAvailableIds | filter:$select.search">
+      {{$ctrl.positionsAvailable[id].name}}
+    </ui-select-choices>
+  </ui-select>
+
+</form>

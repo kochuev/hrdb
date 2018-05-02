@@ -5,15 +5,15 @@ angular
       'hrDbApp',
       'hrDbApp.auth',
       'ui.router',
-      'chart.js'
+      'chart.js',
+      'ui.select'
     ])
     .config(function ($stateProvider) {
       $stateProvider.state({
         name: 'stats',
         url: '/stats',
         component: 'stats',
-        //Fixme: make this string work, there is no docs for this 'authenticate'
-        // authenticate: 'user',
+        authenticate: 'user',
         resolve: {
           'positions': (Entity) => Entity.getPositions(),
           'agencies': (Entity) => Entity.getAgencies(),
