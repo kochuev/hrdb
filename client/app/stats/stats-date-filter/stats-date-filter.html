@@ -1,4 +1,11 @@
-<form name="statsDateFilterForm" ng-model-options="{debounce: 500}">
-  <input type="text" ng-model="$ctrl.startDate" ng-change="$ctrl.onChange()">
-  <input type="text" ng-model="$ctrl.endDate" ng-change="$ctrl.onChange()">
+<form name="statsDateFilterForm">
+  <input
+          ng-model="$ctrl.datePicker.date"
+          ng-change="$ctrl.onChange()"
+          date-range-picker
+          options="$ctrl.datePicker.options"
+          clearable="true"
+          class="form-control"
+          type="text"
+          placeholder="by dates"/>
 </form>
