@@ -58,7 +58,9 @@ angular
               .then(statsByMonth => {
                 this.monthlyChart = this.getMonthlyChart(statsByMonth.data);
               })
-              .catch(this.errorHandeler);
+              .catch((error) => {
+                this.errorHandler(error);
+              });
         }
 
         updateStatsByAgency(params) {
@@ -66,7 +68,9 @@ angular
               .then(statsByAgency => {
                 this.statsByAgency = statsByAgency.data;
               })
-              .catch(this.errorHandeler);
+              .catch((error) => {
+                this.errorHandler(error);
+              });
         }
 
         updateStatsByOrigin(params) {
@@ -74,7 +78,9 @@ angular
               .then(statsByOrigin => {
                 this.statsByOrigin = statsByOrigin.data;
               })
-              .catch(this.errorHandeler);
+              .catch((error) => {
+                this.errorHandler(error);
+              });
         }
 
         getMonthlyChart(statsByMonth) {
@@ -96,7 +102,7 @@ angular
 
         }
 
-        errorHandeler(error) {
+        errorHandler(error) {
           console.warn(error);
           if (error.status === -1) {
             this.resetStatsData();
