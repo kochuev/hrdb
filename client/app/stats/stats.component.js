@@ -21,7 +21,7 @@ angular
           this.startDateParam = undefined;
           this.endDateParam = undefined;
           this.selectedPositionsIds = [];
-          this.positionsAllowedToUser = this.filterPositionsWithUserRights(this.positions);
+          this.allowedToUserPositions = this.filterPositionsWithUserRights(this.positions);
 
         }
 

@@ -5,14 +5,14 @@
   const StatsPositionFilterComponent = {
     bindings: {
       selectedPositionsIds: '<',
-      positionsAvailable: '<',
+      availablePositions: '<',
       onPositionsSelectionChange: '&'
     },
     templateUrl: 'app/stats/stats-position-filter/stats-position-filter.html',
     controller: class StatsPositionFilterComponent {
 
       $onInit() {
-        this.positionsAvailableIds = this.getPositionsIds(this.positionsAvailable);
+        this.availablePositionsIds = this.getPositionsIds(this.availablePositions);
       }
 
       onChange() {

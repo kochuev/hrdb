@@ -9,10 +9,10 @@
           close-on-select="true"
           title="by positions">
     <ui-select-match placeholder="by positions">
-      {{$ctrl.positionsAvailable[$item].name}}
+      {{$ctrl.availablePositions[$item].name}}
     </ui-select-match>
-    <ui-select-choices repeat="id in $ctrl.positionsAvailableIds | filter:$select.search">
-      {{$ctrl.positionsAvailable[id].name}}
+    <ui-select-choices repeat="id in $ctrl.availablePositionsIds | filter:$select.search">
+      {{$ctrl.availablePositions[id].name}}
     </ui-select-choices>
   </ui-select>
 
