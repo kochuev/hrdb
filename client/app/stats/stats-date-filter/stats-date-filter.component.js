@@ -12,6 +12,7 @@
     controller: class StatsDateFilterComponent {
 
       constructor() {
+        this.beginningOfHistory = moment('05-04-2001', 'DD/MM/YYYY');
         this.datePicker = {
           date: {
             startDate: this.startDate,
@@ -19,12 +20,30 @@
           },
           options: {
             ranges: {
-              'This Month': [moment().startOf('month'), moment().endOf('month')],
-              'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
-              'Last 6 Months': [moment().subtract(6, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
-              'This Year': [moment().startOf('year'), moment().endOf('year')],
-              'Last Year': [moment().subtract(1, 'year').startOf('year'), moment().subtract(1, 'year').endOf('year')],
-              'All time': [moment('05-04-2001', 'DD/MM/YYYY'), moment()]
+              'This Month': [
+                moment().startOf('month'),
+                moment().endOf('month')
+              ],
+              'Last Month': [
+                moment().subtract(1, 'month').startOf('month'),
+                moment().subtract(1, 'month').endOf('month')
+              ],
+              'Last 6 Months': [
+                moment().subtract(6, 'month').startOf('month'),
+                moment().subtract(1, 'month').endOf('month')
+              ],
+              'This Year': [
+                moment().startOf('year'),
+                moment().endOf('year')
+              ],
+              'Last Year': [
+                moment().subtract(1, 'year').startOf('year'),
+                moment().subtract(1, 'year').endOf('year')
+              ],
+              'All time': [
+                this.beginningOfHistory,
+                moment()
+              ]
             },
             alwaysShowCalendars: false,
             opens: 'left',
